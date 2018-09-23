@@ -7,7 +7,7 @@ class Customer(models.Model):
     card_id = models.IntegerField()
     full_name = models.CharField(max_length=150, unique=True)
     birth_date = models.DateField(blank=True)
-    phone_number = models.CharField(blank=True)
+    phone_number = models.CharField(max_length=50, blank=True)
     amount_of_available_visitations = models.IntegerField(default=0)
 
     def __str__(self):

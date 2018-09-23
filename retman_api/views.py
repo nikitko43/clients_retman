@@ -1,10 +1,9 @@
-from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from retman_api.migrations.serializers import CustomerSerializer, MembershipSerializer
+from retman_api.serializers import CustomerSerializer, MembershipSerializer
 from retman_api.models import Customer, Membership
 
 
