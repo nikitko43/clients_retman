@@ -7,7 +7,7 @@ from retman_api.serializers import CustomerSerializer, MembershipSerializer
 from retman_api.models import Customer, Membership
 
 
-class CustomersList(viewsets.ModelViewSet):
+class CustomersViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     permission_classes = [IsAuthenticated]
