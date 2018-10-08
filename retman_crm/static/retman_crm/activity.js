@@ -1,7 +1,8 @@
 $(document).ready(function() {
+  const instance = axios.create({ baseURL: 'http://gym.nikitko.ru/' });
   var heatmap;
   axios
-  .get('http://127.0.0.1:8000/v1/visitations/get_data_heatmap/')
+  .get('v1/visitations/get_data_heatmap/')
   .then((response) => {
     heatmap = response.data; 
     var chart1 = calendarHeatmap()
