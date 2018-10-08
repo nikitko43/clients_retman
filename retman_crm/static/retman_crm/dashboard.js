@@ -61,7 +61,7 @@ var visitations = new Vue({
 function click_view_customer(button) {
   c_id = $(button).attr('c_id');
 
-  window.location.href = "gym.nikitko.ru/customer/" + c_id;
+  window.location.href = "http://gym.nikitko.ru/customer/" + c_id;
 }
 
 function click_close_group_all() {
