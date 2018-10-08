@@ -1,5 +1,5 @@
+const instance = axios.create({ baseURL: 'http://gym.nikitko.ru/' });
 $(document).ready(function() {
-  const instance = axios.create({ baseURL: 'http://gym.nikitko.ru/' });
   var heatmap;
   axios
   .get('v1/visitations/get_data_heatmap/')

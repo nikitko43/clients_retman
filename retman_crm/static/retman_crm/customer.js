@@ -1,5 +1,6 @@
 var splitted_url = window.location.pathname.split('/');
 var customer_id = splitted_url[splitted_url.length - 1]
+const instance = axios.create({ baseURL: 'http://gym.nikitko.ru/' });
 
 Vue.component('customer-full', {
   props: ['customer'],
@@ -46,7 +47,7 @@ var customer = new Vue({
   methods: {
   get_customer: function () {
     axios
-    .get('http://127.0.0.1:8000/v1/customers/' + customer_id)
+    .get('v1/customers/' + customer_id)
     .then((response) => {this.info = response.data});
   }},
   mounted: function () {this.get_customer()}
@@ -62,7 +63,7 @@ var customer_membership = new Vue({
   methods: {
   get_customer_membership: function () {
     axios
-    .get('http://127.0.0.1:8000/v1/customers/' + customer_id + '/membership/')
+    .get('v1/customers/' + customer_id + '/membership/')
     .then((response) => {this.info = response.data});
   }},
   mounted: function () {this.get_customer_membership()}
@@ -78,7 +79,7 @@ var customer_memberships = new Vue({
   methods: {
   get_customer_memberships: function () {
     axios
-    .get('http://127.0.0.1:8000/v1/customers/' + customer_id + '/memberships/')
+    .get('v1/customers/' + customer_id + '/memberships/')
     .then((response) => {this.info = response.data});
   }},
   mounted: function () {this.get_customer_memberships()}
@@ -94,7 +95,7 @@ var customer_visitations = new Vue({
   methods: {
   get_customer_visitations: function () {
     axios
-    .get('http://127.0.0.1:8000/v1/customers/' + customer_id + '/visitations/')
+    .get('v1/customers/' + customer_id + '/visitations/')
     .then((response) => {this.info = response.data});
   }},
   mounted: function () {this.get_customer_visitations()}
@@ -115,7 +116,7 @@ $(document).ready(function() {
             contentType: false,
 
             success: (result) => {
-              window.location.href = "http://127.0.0.1:8000/dashboard/";
+              window.location.href = "http://gym.nikitko.ru/dashboard/";
             },
 
             error: (result) => {
@@ -172,7 +173,7 @@ $(document).ready(function() {
 
     var costs;
     axios
-    .get('http://127.0.0.1:8000/v1/costs/')
+    .get('v1/costs/')
     .then((response) => {costs = response.data});
 
     function set_ms_cost(){

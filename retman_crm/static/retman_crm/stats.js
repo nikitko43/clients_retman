@@ -1,3 +1,5 @@
+const instance = axios.create({ baseURL: 'http://gym.nikitko.ru/' });
+
 Vue.component('stats', {
   props: ['data'],
   template: `<div>
@@ -20,7 +22,7 @@ var stats = new Vue({
   methods: {
   get_stats: function () {
     axios
-    .get('http://127.0.0.1:8000/v1/payments/overview/')
+    .get('v1/payments/overview/')
     .then((response) => {this.info = response.data});
   }},
   mounted: function () {this.get_stats()}

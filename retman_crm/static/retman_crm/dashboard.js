@@ -1,3 +1,5 @@
+const instance = axios.create({ baseURL: 'http://gym.nikitko.ru/' });
+
 Vue.component('customer', {
   props: ['customer'],
   template: `<b><b class="has-text-grey-light">{{ customer.card_id }}</b>
@@ -23,7 +25,7 @@ var customers = new Vue({
   methods: {
   get_customers: function () {
     axios
-    .get('http://127.0.0.1:8000/v1/customers/')
+    .get('v1/customers/')
     .then((response) => {this.info = response.data});
   }},
   mounted: function () {this.get_customers()}
@@ -39,7 +41,7 @@ var visitations = new Vue({
   methods: {
   get_visitations: function () {
     axios
-    .get('http://127.0.0.1:8000/v1/visitations/')
+    .get('v1/visitations/')
     .then((response) => {
       this.vs = [];
       this.gt = []
@@ -59,7 +61,7 @@ var visitations = new Vue({
 function click_view_customer(button) {
   c_id = $(button).attr('c_id');
 
-  window.location.href = "http://127.0.0.1:8000/customer/" + c_id;
+  window.location.href = "gym.nikitko.ru/customer/" + c_id;
 }
 
 function click_close_group_all() {

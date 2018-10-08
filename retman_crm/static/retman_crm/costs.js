@@ -1,4 +1,5 @@
 var csrftoken = Cookies.get('csrftoken');
+const instance = axios.create({ baseURL: 'http://gym.nikitko.ru/' });
 
 Vue.component('simple', {
   props: ['item'],
@@ -22,7 +23,7 @@ var costs = new Vue({
   methods: {
   get_costs: function () {
     axios
-    .get('http://127.0.0.1:8000/v1/costs/')
+    .get('v1/costs/')
     .then((response) => {this.info = response.data});
   }},
   mounted: function () {this.get_costs()}
