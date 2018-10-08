@@ -1,0 +1,152 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ name }}</title>
+  <link rel="stylesheet" type="text/css" href="{% static "retman_crm/styles.css" %}">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<section class="section">
+  <div class="container">
+    <a href="/dashboard/">
+      <div>
+        <img border="0" src="{% static "retman_crm/arrow.png" %}" width="25" height="25" class="b-p-img">
+      </div>
+    </a>
+    <div class="columns">
+      <div class="column is-two-thirds">
+        <div id="customer" class="box customer-box">
+          <customer-full
+            v-bind:customer="info">
+          </customer-full>
+        </div>
+      </div>
+
+      <div class="column">
+        <div id="create_visitation" class="box">
+          <h1 class="is-size-3 b-p"> Посещение </h1>
+          <form id="form_visitation" class="control">
+            {% csrf_token %}
+            <div class="field">
+              <label class="label">Выданный ключ</label>
+              {% render_field visitation_form.key_number class+="input" min="0"%}
+            </div>
+            <div class="field">
+              <label class="label">Тип</label>
+              <div class="radio">
+                {% render_field visitation_form.type %}
+              </div>
+            </div>
+            <button class="button is-info">Добавить</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="customer_membership" class="box">
+      <h1 class="is-size-3 b-p"> Данные о текущем абонементе посетителя </h1>
+      <div v-if="Object.keys(info).length != 0">
+        <membership
+          v-bind:membership="info">
+        </membership>
+      </div>
+      <div v-if="Object.keys(info).length === 0">
+        <p>Нет активного абонемента</p>
+      </div>
+    </div>
+
+    <div class="columns">
+      <div class="column">
+        <div id="create_membership" class="box membership-box">
+          <h1 class="is-size-3 b-p"> Добавить абонемент </h1>
+          <form id="form_membership" class="control">
+            {% csrf_token %}
+            <div class="field">
+              <label class="label">Количество месяцев</label>
+              {% render_field membership_form.months class+="input" id="ms_amount" min="0"%}
+            </div>
+            <div class="field">
+              <label class="label">Стоимость</label>
+              {% render_field membership_form.cost class+="input" id="ms_value" min="0"%}
+            </div>
+            <button class="button is-info">Добавить</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="column">
+        <div id="add_visitations" class="box">
+          <h1 class="is-size-3 b-p"> Добавить посещения </h1>
+          <form id="form_add_visitations" class="control">
+            {% csrf_token %}
+            <div class="field">
+              <label class="label">Количество</label>
+              <input type="number" min="0" step="1" name="amount" id="vs_amount" class="input">
+            </div>
+            <div class="field">
+              <label class="label">Стоимость</label>
+              <input type="number" min="0" step="1" name="value" id="vs_value" class="input">
+            </div>
+            <div class="field">
+              <label class="label">Тип</label>
+              <div class="select">
+                <select name="type" id="vs_type">
+                  <option value="VS" selected>Обычные</option>
+                  <option value="PT">Персональные тренировки</option>
+                  <option value="GT">Групповые тренировки</option>
+                </select>
+              </div>
+            </div>
+            <button class="button is-info">Добавить</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="customer_memberships" class="box">
+      <h1 class="is-size-3 b-p" id="mh1"> Все абонементы посетителя </h1>
+      <div id="list_memberships" class="is-hidden">
+        <div v-if="Object.keys(info).length != 0">
+          <div v-for="item in info" >
+            <short-membership
+              v-bind:membership="item">
+            </short-membership>
+          </div>
+        </div>
+        <div v-if="Object.keys(info).length === 0">
+          <p>Нет абонементов</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="customer_visitations" class="box">
+      <h1 class="is-size-3 b-p" id="vh1"> Все посещения </h1>
+      <div id="list_visitations" class="is-hidden">
+        <div v-if="Object.keys(info).length != 0">
+          <div v-for="item in info">
+            <visitation
+              v-bind:visitation="item">
+            </visitation>
+          </div>
+        </div>
+        <div v-if="Object.keys(info).length === 0">
+          <p>Нет посещений</p>
+        </div>
+      </div>  
+    </div>
+
+  </div>
+</section>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="{% static "retman_crm/customer.js" %}"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <link rel="stylesheet" type="text/css" href="{% static "retman_crm/login.css" %}">
+</head>
+<body>
+<div class="login-page">
+  <div class="form">
+    <form action="{{ form_action }}" method="post" class="login-form">
+      {% csrf_token %}
+      {% for field in form %}
+        {{ field.as_widget }}
+      {% endfor %}
+      <button>Войти</button>
+    </form>
+  </div>
+</div>
+<script src="{% static "retman_crm/login.js" %}"></script>
+</body>
+</html>

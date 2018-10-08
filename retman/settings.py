@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'retman_api',
+    'retman_crm',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -101,22 +103,34 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DATETIME_FORMAT': "%d/%m/%Y %H:%M:%S",
+    'DATE_FORMAT': "%d-%m-%Y",
+    'DATE_INPUT_FORMATS': ["%d-%m-%Y", "%d %m %Y"],
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+_PATH = os.path.abspath(os.path.dirname(__file__))
+
+LOGIN_REDIRECT_URL = '/dashboard/'

@@ -1,0 +1,34 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Статистика</title>
+  <link rel="stylesheet" type="text/css" href="{% static "retman_crm/styles.css" %}">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<section class="section">
+  <div class="container">
+    <a href="/dashboard/">
+      <div>
+        <img border="0" src="{% static "retman_crm/arrow.png" %}" width="25" height="25" class="b-p-img">
+      </div>
+    </a>
+    <div class="box" id="stats">
+      <h1 class="is-size-3 b-p"> Статистика </h1>
+        <stats
+          v-bind:data="info">
+        </stats>
+      </div>
+    </div>
+  </div>
+</section>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="{% static "retman_crm/stats.js" %}"></script>
+</body>

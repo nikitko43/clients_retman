@@ -1,0 +1,157 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Панель управления</title>
+  <link rel="stylesheet" type="text/css" href="{% static "retman_crm/styles.css" %}">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<section class="section">
+  <div class="container">
+
+    <div class="modal" id="modal">
+      <div class="modal-background" onclick="modal.close()"></div>
+        <div class="modal-content">
+          <div class="box">
+            <h1 class="is-size-3 b-p"> Добавить посещение </h1>
+            <form id="form_visitation" class="control">
+              {% csrf_token %}
+              <div class="field">
+                <label class="label">Выданный ключ</label>
+                {% render_field visitation_form.key_number class+="input" min="0"%}
+              </div>
+              <div class="field">
+                <label class="label">Тип</label>
+                <div class="radio">
+                  {% render_field visitation_form.type %}
+                </div>
+              </div>
+              <button class="button is-info">Добавить</button>
+            </form>
+          </div>
+        </div>
+      <button class="modal-close is-large" aria-label="close" onclick="modal.close()"></button>
+    </div>
+
+    <div class="columns">
+      <div class="column is-two-thirds">
+        <div class="box">
+          <form action="/redirect_to_customer/" method="POST">
+            {% csrf_token %}
+            <div class="field has-addons">
+              <div class="control is-expanded">
+                <input type="number" min="0" step="1" name="card_id" class="input is-large" id="card_id" >
+              </div>
+              <div class="control">
+                <button class="button is-info is-large"> Найти по ID </button>
+              </div>
+              <div class="control">
+                <a class="button is-info is-large is-outlined" id="add_visitation">+</a>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div id="visitations" class="box">
+          <h1 class="is-size-3 b-p"> Текущие посетители </h1>
+          <div v-if="Object.keys(gt).length != 0">
+            <p><b>Обычные:</b></p>
+            <div v-if="Object.keys(vs).length == 0">
+              <p>Нет посетителей</p>
+            </div>
+          </div>
+
+          <div v-for="item in vs">
+            <visitation
+              v-bind:visitation="item"
+              v-bind:key-v="item.id">
+            </visitation>
+          </div>
+
+          <div v-if="Object.keys(gt).length != 0">
+            <div>
+              <span class="gt_text">
+                <b>Групповые:</b> 
+                <a onclick="click_close_group_all(this)" class="delete is-pulled-right"></a>
+              </span>
+            </div>
+
+            <div v-for="item in gt">
+              <visitation
+                v-bind:visitation="item"
+                v-bind:key-v="item.id">
+              </visitation>
+            </div>
+
+          </div>
+          <div v-if="Object.keys(vs).length === 0 && Object.keys(gt).length === 0">
+            <p>Нет текущих посетителей</p>
+          </div>
+        </div>
+
+        <div id="customers" class="box">
+          <h1 class="is-size-3 b-p"> Все посетители </h1>
+          <div id="all_customers">
+            <div v-for="item in info">
+              <customer
+                v-bind:customer="item"
+                v-bind:key-v="item.id">
+              </customer>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column">
+        <div id="create_customer" class="box">
+          <h1 class="is-size-3 b-p" id="mh1">Новый посетитель</h1>
+          <div id="form_customer_hide">
+            <form id="form_customer" class="control">
+              {% csrf_token %}
+              <div class="field">
+                <label class="label">ID карты</label>
+                {% render_field customer_form.card_id class+="input" min="0"%}
+              </div>
+              <div class="field">
+                <label class="label">ФИО</label>
+                {% render_field customer_form.full_name class+="input" autocomplete="off"%}
+              </div>
+              <div class="field">
+                <label class="label">Дата рождения</label>
+                {% render_field customer_form.birth_date class+="input" autocomplete="off"%}
+              </div>
+              <div class="field">
+                <label class="label">Номер телефона</label>
+                {% render_field customer_form.phone_number class+="input" autocomplete="off"%}
+              </div>
+              <div class="field">
+                <label class="label">Серия и номер паспорта</label>
+                {% render_field customer_form.passport class+="input" autocomplete="off"%}
+              </div>
+              <button class="button is-info">Создать</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <a class="button is-outlined is-medium" href="/costs/">Стоимости</a> 
+      <a class="button is-outlined is-medium" href="/stats/">Статистика</a>
+      <a class="button is-outlined is-medium" href="/activity/">Активность</a>
+    </div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="{% static "retman_crm/dashboard.js" %}"></script>
+</body>
+</html>

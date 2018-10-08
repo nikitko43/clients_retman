@@ -1,6 +1,7 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer, Serializer
 
-from retman_api.models import Customer, Membership
+from retman_api.models import Customer, Membership, Visitation, Payment, Cost
 
 
 class CustomerSerializer(ModelSerializer):
@@ -16,6 +17,36 @@ class MembershipSerializer(ModelSerializer):
 
 
 class VisitationSerializer(ModelSerializer):
+    type_display = serializers.CharField(source='get_type_display', required=False)
+
     class Meta:
-        model = Membership
+        model = Visitation
         fields = '__all__'
+
+
+class VisitationWithCustomerSerializer(ModelSerializer):
+    customer = CustomerSerializer(many=False, required=False, read_only=True)
+
+    class Meta:
+        model = Visitation
+        fields = '__all__'
+
+
+class PaymentSerializer(ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = '__all__'
+
+
+class CostSerializer(ModelSerializer):
+    type_display = serializers.CharField(source='get_type_display', required=False)
+    class Meta:
+        model = Cost
+        fields = '__all__'
+
+
+class VisitationHeatmapSerializer(Serializer):
+    date = serializers.DateField()
+    count = serializers.IntegerField()
+
+
