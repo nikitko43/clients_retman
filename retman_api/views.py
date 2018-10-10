@@ -25,7 +25,6 @@ class MembershipsList(viewsets.ReadOnlyModelViewSet):
 
 
 class CurrentMembershipCreate(APIView):
-    # GET возвращает действующий абонемент
     def get(self, request, customer_id):
         memberships = Membership.objects.filter(customer=customer_id,
                                                 expiration_date__gt=timezone.now(), enrollment_date__lt=timezone.now())
@@ -148,8 +147,6 @@ class AddVisitationsView(APIView):
 
         amount = int(request.data.get('amount', 0))
         type = request.data.get('type')
-
-        print(amount, type)
 
         if type == 'VS':
             customer.amount_of_available_visitations += amount

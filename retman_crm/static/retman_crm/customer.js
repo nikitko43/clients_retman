@@ -47,7 +47,7 @@ var customer = new Vue({
   methods: {
   get_customer: function () {
     axios
-    .get('v1/customers/' + customer_id)
+    .get('v1/customers/' + customer_id + '/')
     .then((response) => {this.info = response.data});
   }},
   mounted: function () {this.get_customer()}
@@ -106,7 +106,7 @@ $(document).ready(function() {
     form_visitation.on('submit', function (e) {
         e.preventDefault();
         const formData = new FormData(this);
-        formData.set('customer_id', customer_id)
+        formData.set('customer_id', customer_id);
 
         $.ajax({
             type: 'POST',
@@ -138,7 +138,7 @@ $(document).ready(function() {
             contentType: false,
 
             success: (result) => {
-              alert('Добавлено')
+              alert('Добавлено');
               form_add_visitations[0].reset();
               $('#vs_amount').val('');
               customer.get_customer();
@@ -159,6 +159,7 @@ $(document).ready(function() {
             contentType: false,
 
             success: (result) => {
+              alert('Добавлено');
               form_membership[0].reset();
               customer.get_customer();
               customer_membership.get_customer_membership();
