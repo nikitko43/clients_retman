@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '&((h)gf#9!gkh%5sg+!zkh&24ycige=e(!)(!__((*&b7+7$46'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['gym.nikitko.ru']
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'retman_api',
     'retman_crm',
     'widget_tweaks',
+    'psycopg2',
 ]
 
 MIDDLEWARE = [
@@ -79,8 +80,12 @@ WSGI_APPLICATION = 'retman.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'gym',
+        'USER': 'gym',
+        'PASSWORD': 'retman',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
@@ -128,6 +133,8 @@ USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
+
+STATIC_ROOT = '/root/gym/retman_crm/static/'
 
 STATIC_URL = '/static/'
 

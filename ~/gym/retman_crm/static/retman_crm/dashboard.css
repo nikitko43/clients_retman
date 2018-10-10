@@ -1,0 +1,32 @@
+.b-p {
+    padding-bottom: 15px;
+}
+
+.b-p-img {
+    padding-bottom: 20px;
+}
+
+.gt_text {
+    padding-top: 10px;
+    display: block;
+}
+
+html {
+    background-color:rgba(226, 226, 226, 1);
+}
+
+body {
+    min-height: 100%;
+    height: auto !important;
+    height: 100% !important;
+}
+
+.has-text-grey-light {
+    display: inline-block;
+    min-width: 35px;
+}
+
+#all_customers {
+    max-height: 335px;
+    overflow: scroll;
+}
