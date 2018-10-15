@@ -38,7 +38,7 @@ function calendarHeatmap() {
     counterMap= {};
 
     data.forEach(function (element, index) {
-        var key= moment(element.date).format( 'YYYY-MM-DD' );
+        var key= moment(element.date, 'DD-MM-YYYY').format( 'YYYY-MM-DD' );
         var counter= counterMap[key] || 0;
         counterMap[key]= counter + element.count;
     });
@@ -111,7 +111,8 @@ function calendarHeatmap() {
     if (chart.data().length == 0) {
       max = 0;
     } else if (max === null) {
-      max = d3.max(chart.data(), function (d) { return d.count; }); // max data value
+
+        max = d3.max(chart.data(), function (d) { return d.count; }); // max data value
     }
 
     // color range
@@ -120,7 +121,7 @@ function calendarHeatmap() {
       .domain([0, max]);
 
     var tooltip;
-    var dayRects;
+      var dayRects;
 
     drawChart();
 
