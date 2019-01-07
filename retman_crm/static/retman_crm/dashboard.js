@@ -1,4 +1,4 @@
-const instance = axios.create({ baseURL: 'http://gym.nikitko.ru/' });
+const instance = axios.create({ baseURL: 'http://127.0.0.1:8000' });
 
 Vue.component('customer', {
   props: ['customer'],
@@ -44,7 +44,7 @@ var visitations = new Vue({
     .get('v1/visitations/')
     .then((response) => {
       this.vs = [];
-      this.gt = []
+      this.gt = [];
       for (var item of response.data){
         if (item.type == 'GT'){
           this.gt.push(item);
@@ -100,14 +100,13 @@ $(document).ready(function() {
 
     $("#add_visitation").click(function(){
       $(".modal").addClass('is-active');
-    })
+    });
 
     var form_visitation = $("#form_visitation");
     form_visitation.on('submit', function (e) {
         e.preventDefault();
         const formData = new FormData(this);
-        formData.set('card_id', $("#card_id").val())
-        console.log(formData);
+        formData.set('card_id', $("#card_id").val());
 
         $.ajax({
             type: 'POST',

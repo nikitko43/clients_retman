@@ -7,10 +7,20 @@
   <meta charset="UTF-8">
   <title>{{ name }}</title>
   <link rel="stylesheet" type="text/css" href="{% static "retman_crm/styles.css" %}">
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.css">
+  <link rel="stylesheet" type="text/css" href="{% static "retman_crm/bulma.css" %}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+
+<div class="modal" id="modal">
+  <div class="modal-background" onclick="modal.close()"></div>
+    <div class="modal-content">
+      <div class="box">
+        <video id="take-photo" autoplay></video>
+      </div>
+    </div>
+  <button class="modal-close is-large" aria-label="close" onclick="modal.close()"></button>
+</div>
 
 <section class="section">
   <div class="container">
@@ -20,11 +30,29 @@
       </div>
     </a>
     <div class="columns">
-      <div class="column is-two-thirds">
-        <div id="customer" class="box customer-box">
-          <customer-full
-            v-bind:customer="info">
-          </customer-full>
+      <div class="column is-9">
+        <div class="box">
+        <div class="columns" id="customer">
+            <div class="column">
+              <img v-if="info.photo != null" :src="info.photo" id="take-photo-button">
+              <img v-else src="/media/images/blank.png" id="take-photo-button">
+            </div>
+            <div class="column is-8">
+              <customer-full
+                v-bind:customer="info">
+              </customer-full>
+            </div>
+          </div>
+        </div>
+        <div id="customer_membership" class="box">
+          <div v-if="Object.keys(info).length != 0">
+            <membership
+              v-bind:membership="info">
+            </membership>
+          </div>
+          <div v-if="Object.keys(info).length === 0">
+            <p>Нет активного абонемента</p>
+          </div>
         </div>
       </div>
 
@@ -38,6 +66,10 @@
               {% render_field visitation_form.key_number class+="input" min="0"%}
             </div>
             <div class="field">
+              <label class="label">Дополнительно</label>
+              {% render_field visitation_form.note class+="input"%}
+            </div>
+            <div class="field">
               <label class="label">Тип</label>
               <div class="radio">
                 {% render_field visitation_form.type %}
@@ -49,16 +81,18 @@
       </div>
     </div>
 
-    <div id="customer_membership" class="box">
-      <h1 class="is-size-3 b-p"> Данные о текущем абонементе посетителя </h1>
-      <div v-if="Object.keys(info).length != 0">
-        <membership
-          v-bind:membership="info">
-        </membership>
-      </div>
-      <div v-if="Object.keys(info).length === 0">
-        <p>Нет активного абонемента</p>
-      </div>
+    <div id="customer_notes" class="box">
+      <h1 class="is-size-3 b-p"> Дополнительная информация </h1>
+      <form id="form_notes" class="control">
+        {% csrf_token %}
+        <div class="field">
+          {% render_field notes_form.notes class+="input" id="notes"%}
+        </div>
+        <div class="flex-centered">
+          <button class="button is-info">Сохранить</button><p id="saved-text">Сохранено!</p>
+        </div>
+
+      </form>
     </div>
 
     <div class="columns">
@@ -107,6 +141,21 @@
           </form>
         </div>
       </div>
+
+      <div class="column">
+        <div id="freeze" class="box">
+          <h1 class="is-size-3 b-p"> Заморозить абонемент </h1>
+          <form id="form_freeze" class="control">
+            {% csrf_token %}
+            <div class="field">
+              <label class="label">Количество дней</label>
+              <input type="number" min="0" step="1" name="days" class="input">
+            </div>
+            <button class="button is-info">Заморозить</button>
+          </form>
+        </div>
+      </div>
+
     </div>
 
     <div id="customer_memberships" class="box">
@@ -144,9 +193,9 @@
   </div>
 </section>
 
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="{% static "retman_crm/jquery-3.3.1.min.js" %}"></script>
+  <script src="{% static "retman_crm/axios.min.js" %}"></script>
+  <script src="{% static "retman_crm/vue.js" %}"></script>
   <script src="{% static "retman_crm/customer.js" %}"></script>
 </body>
 </html>

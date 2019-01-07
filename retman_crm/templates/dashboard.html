@@ -7,7 +7,7 @@
   <meta charset="UTF-8">
   <title>Панель управления</title>
   <link rel="stylesheet" type="text/css" href="{% static "retman_crm/styles.css" %}">
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.css">
+  <link rel="stylesheet" type="text/css" href="{% static "retman_crm/bulma.css" %}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
@@ -24,6 +24,10 @@
               <div class="field">
                 <label class="label">Выданный ключ</label>
                 {% render_field visitation_form.key_number class+="input" min="0"%}
+              </div>
+              <div class="field">
+                <label class="label">Дополнительно</label>
+                {% render_field visitation_form.note class+="input"%}
               </div>
               <div class="field">
                 <label class="label">Тип</label>
@@ -126,12 +130,20 @@
                 {% render_field customer_form.birth_date class+="input" autocomplete="off"%}
               </div>
               <div class="field">
+                <label class="label">Кто привел</label>
+                {% render_field customer_form.who_advised class+="input" autocomplete="off"%}
+              </div>
+              <div class="field">
                 <label class="label">Номер телефона</label>
                 {% render_field customer_form.phone_number class+="input" autocomplete="off"%}
               </div>
               <div class="field">
                 <label class="label">Серия и номер паспорта</label>
                 {% render_field customer_form.passport class+="input" autocomplete="off"%}
+              </div>
+              <div class="field">
+                <label class="label">Дополнительно</label>
+                {% render_field customer_form.notes class+="input" autocomplete="off"%}
               </div>
               <button class="button is-info">Создать</button>
             </form>
@@ -142,16 +154,15 @@
 
     <div class="box">
       <a class="button is-outlined is-medium" href="/costs/">Стоимости</a> 
-      <a class="button is-outlined is-medium" href="/stats/">Статистика</a>
       <a class="button is-outlined is-medium" href="/activity/">Активность</a>
     </div>
 
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="{% static "retman_crm/js.cookie.min.js" %}"></script>
+<script src="{% static "retman_crm/jquery-3.3.1.min.js" %}"></script>
+<script src="{% static "retman_crm/axios.min.js" %}"></script>
+<script src="{% static "retman_crm/vue.js" %}"></script>
 <script src="{% static "retman_crm/dashboard.js" %}"></script>
 </body>
 </html>

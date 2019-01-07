@@ -6,12 +6,26 @@
     padding-bottom: 20px;
 }
 
-.customer-box {
-    height: 299px;
-}
-
 .membership-box {
     height: 379px;
+}
+
+#notes {
+    height: 150px;
+}
+
+#take-photo-button {
+    margin: 12px 0;
+}
+
+.flex-centered {
+    display: flex;
+    align-items: center;
+}
+
+#saved-text {
+    padding-left: 20px;
+    display: none;
 }
 
 .gt_text {
@@ -27,6 +41,10 @@ body {
     min-height: 100%;
     height: auto !important;
     height: 100% !important;
+}
+
+.table {
+    width: 100%;
 }
 
 .has-text-grey-light {

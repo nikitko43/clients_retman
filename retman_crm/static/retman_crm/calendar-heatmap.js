@@ -7,7 +7,7 @@ function calendarHeatmap() {
   var selector = 'body';
   var SQUARE_LENGTH = 16;
   var SQUARE_PADDING = 2;
-  var MONTH_LABEL_PADDING = 6;
+  var MONTH_LABEL_PADDING = 16;
   var now = moment().endOf('day').toDate();
   var yearAgo = moment().startOf('day').subtract(1, 'year').subtract(26, 'day').toDate();
   var startDate = null;
@@ -167,10 +167,11 @@ function calendarHeatmap() {
           tooltip = d3.select(chart.selector())
             .append('div')
             .attr('class', 'day-cell-tooltip')
+            .attr('id', 'day-cell-tooltip')
             .html(tooltipHTMLForDate(d))
             .style('left', function () { return Math.floor(i / 7.3) * SQUARE_LENGTH + 'px'; })
             .style('top', function () {
-              return formatWeekday(d.getDay()) * (SQUARE_LENGTH + SQUARE_PADDING) + MONTH_LABEL_PADDING * 2 - 2 + 'px';
+              return formatWeekday(d.getDay()) * (SQUARE_LENGTH + SQUARE_PADDING) + MONTH_LABEL_PADDING * 2 - 15 + 'px';
             });
         })
         .on('mouseout', function (d, i) {
@@ -226,7 +227,7 @@ function calendarHeatmap() {
 
             return Math.floor(matchIndex / 7) * (SQUARE_LENGTH + SQUARE_PADDING);
           })
-          .attr('y', 0);  // fix these to the top
+          .attr('y', 10);  // fix these to the top
 
       locale.days.forEach(function (day, index) {
         index = formatWeekday(index);

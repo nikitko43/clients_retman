@@ -19,7 +19,8 @@ class VisitationCreateForm(forms.ModelForm):
         model = Visitation
         exclude = ('customer', 'came_at', 'left_at')
         widgets = {
-            'type': forms.RadioSelect()
+            'type': forms.RadioSelect(),
+            'note': forms.Textarea(),
         }
 
 
@@ -39,3 +40,11 @@ class CostCreateForm(forms.ModelForm):
     class Meta:
         model = Cost
         fields = '__all__'
+
+
+class NotesForm(forms.Form):
+    notes = forms.CharField(widget=forms.Textarea, required=False)
+
+
+class FreezeForm(forms.Form):
+    days = forms.IntegerField()

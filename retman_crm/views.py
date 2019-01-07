@@ -6,7 +6,8 @@ from django.urls import reverse
 from django.views import View
 
 from retman_api.models import Customer
-from retman_crm.forms import LoginForm, CustomerCreateForm, VisitationCreateForm, MembershipCreateForm, CostCreateForm
+from retman_crm.forms import LoginForm, CustomerCreateForm, VisitationCreateForm, MembershipCreateForm, CostCreateForm, \
+    FreezeForm, NotesForm
 
 
 class RetmanLoginView(LoginView):
@@ -44,6 +45,10 @@ class CustomerView(LoginRequiredMixin, View):
         data.update({'visitation_form': visitation_form})
         membership_form = MembershipCreateForm()
         data.update({'membership_form': membership_form})
+        freeze_form = FreezeForm()
+        data.update({'freeze_form': freeze_form})
+        notes_form = NotesForm()
+        data.update({'notes_form': notes_form})
         data.update({'name': Customer.objects.get(pk=customer_id).full_name})
         return render(request, 'customer.html', data)
 
@@ -53,7 +58,7 @@ class RedirectToCustomerView(View):
         try:
             customer = Customer.objects.get(card_id=request.POST['card_id'])
             return redirect('/customer/' + str(customer.id))
-        except ObjectDoesNotExist:
+        except:
             return redirect('/dashboard/')
 
 

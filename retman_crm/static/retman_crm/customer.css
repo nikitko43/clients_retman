@@ -1,3 +1,8 @@
+video, canvas {
+    transform: scale(-1, 1); /*For Firefox (& IE) */
+    -webkit-transform: scale(-1, 1); /*for Chrome & Opera (& Safari) */
+}
+
 .b-p {
     padding-bottom: 15px;
 }
@@ -6,9 +11,7 @@
     padding-bottom: 20px;
 }
 
-.customer-box {
-    height: 299px;
-}
+
 
 .membership-box {
     height: 379px;

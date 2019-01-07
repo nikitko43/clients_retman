@@ -8,7 +8,7 @@
   <title>Активность</title>
   <link rel="stylesheet" type="text/css" href="{% static "retman_crm/styles.css" %}">
   <link rel="stylesheet" type="text/css" href="{% static "retman_crm/calendar-heatmap.css" %}">
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.css">
+  <link rel="stylesheet" type="text/css" href="{% static "retman_crm/bulma.css" %}"
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
@@ -29,7 +29,7 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://d3js.org/d3.v5.min.js"></script>
-<script src="http://momentjs.com/downloads/moment.js"></script>
+<script src="{% static "retman_crm/moment.js" %}"></script>
 <script src="{% static "retman_crm/calendar-heatmap.js" %}"></script>
 <script src="{% static "retman_crm/activity.js" %}"></script>
 </body>

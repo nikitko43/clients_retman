@@ -1,8 +1,10 @@
-from datetime import timedelta
+from datetime import timedelta, datetime, date
+from dateutil.relativedelta import relativedelta
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count, Sum
 from django.utils import timezone
+from django.views.generic import ListView
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -75,7 +77,10 @@ class OpenVisitation(APIView):
         serializer = VisitationSerializer(data=data)
 
         if not visitations and type in ['VS', 'PT', 'GT']:
-            if membership and type == 'VS' and serializer.is_valid():
+            if membership and not membership.first().freeze_end and type == 'VS' and serializer.is_valid():
+                pass
+
+            elif membership and membership.first().freeze_end <= date.today() and type == 'VS':
                 pass
 
             elif customer.amount_of_available_visitations != 0 and type == 'VS' and serializer.is_valid():
@@ -211,6 +216,49 @@ class PaymentsOverview(APIView):
 
         data.update({'last_month_gt': last_month_gt['value__sum'] or 0})
         return Response(data, status=status.HTTP_200_OK)
+
+ListView
+
+class FreezeMembership(APIView):
+    def post(self, request, customer_id):
+        memberships = Membership.objects.filter(customer=customer_id,
+                                                expiration_date__gt=timezone.now(), enrollment_date__lt=timezone.now())
+
+        if not memberships:
+            return Response("Customer don't have a membership", status=status.HTTP_400_BAD_REQUEST)
+        else:
+            membership = memberships.first()
+
+        days = int(request.data.get('days'))
+
+        if not membership.freeze_start and 30 > days > 0:
+            membership.freeze_start = datetime.today()
+            membership.freeze_end = datetime.today() + timedelta(days=days)
+            membership.expiration_date = membership.expiration_date + relativedelta(days=days)
+            membership.save()
+            Membership.objects.filter(customer=customer_id, expiration_date__gt=timezone.now(),
+                                      enrollment_date__lt=timezone.now()).update(
+                expiration_date=membership.expiration_date + relativedelta(days=days))
+
+            return Response('OK', status=status.HTTP_200_OK)
+
+        else:
+            return Response('Can not freeze', status=status.HTTP_400_BAD_REQUEST)
+
+
+class SavePhoto(APIView):
+    def post(self, request, customer_id):
+        try:
+            customer = Customer.objects.get(pk=customer_id)
+        except ObjectDoesNotExist:
+            return Response('No such customer', status=status.HTTP_400_BAD_REQUEST)
+
+        if request.FILES['image']:
+            customer.photo = request.FILES['image']
+            customer.save()
+            return Response('OK', status=status.HTTP_200_OK)
+        else:
+            return Response('Error happened', status=status.HTTP_400_BAD_REQUEST)
 
 
 class CostsViewSet(viewsets.ModelViewSet):
