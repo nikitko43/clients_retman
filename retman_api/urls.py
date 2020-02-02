@@ -1,9 +1,10 @@
+from django.contrib import admin
 from django.urls import path
 
 from retman_api.views import CustomersViewSet, CurrentMembershipCreate, MembershipsList, CurrentVisitation, \
-    VisitationsList, CurrentVisitationsList, CloseCurrentVisitation, AddVisitationsView, VisitationHeatmapView, \
-    PaymentsList, PaymentsOverview, CostsViewSet, CloseGroupVisitations, OpenVisitation, FreezeMembership, SavePhoto, \
-    CheckIntroducing, CustomerName, TodayCustomersViewSet
+    VisitationsList, CurrentVisitationsList, CloseCurrentVisitation, VisitationHeatmapView, \
+    PaymentsList, PaymentsOverview, CloseGroupVisitations, OpenVisitation, FreezeMembership, SavePhoto, \
+    CheckIntroducing, CustomerName, TodayCustomersViewSet, MembershipTypesList, TrainersList
 
 app_name = 'retman_api'
 
@@ -16,7 +17,6 @@ urlpatterns = [
     path('customers/<int:customer_id>/memberships/', MembershipsList.as_view({'get': 'list'}), name='memberships_list'),
     path('customers/<int:customer_id>/visitation/', CurrentVisitation.as_view(), name='current_visitation'),
     path('customers/<int:customer_id>/visitations/', VisitationsList.as_view({'get': 'list'}), name='visitations_list'),
-    path('customers/<int:customer_id>/visitations/add/', AddVisitationsView.as_view(), name='add_visitations'),
     path('customers/<int:customer_id>/visitation/close/', CloseCurrentVisitation.as_view(), name='close_visitation'),
     path('customers/<int:customer_id>/photo/', SavePhoto.as_view(), name='save_photo'),
     path('customers/<int:customer_id>/introducing/', CheckIntroducing.as_view(), name='check_introducing'),
@@ -26,7 +26,8 @@ urlpatterns = [
     path('visitations/close_group/', CloseGroupVisitations.as_view(), name='close_group_visitations'),
     path('visitations/get_data_heatmap/', VisitationHeatmapView.as_view(), name='heatmap'),
     path('payments/', PaymentsList.as_view({'get': "list"}), name="payments"),
+    path('trainers/', TrainersList.as_view({'get': "list"}), name="trainers"),
+    path('membership_types/', MembershipTypesList.as_view({'get': 'list'}), name="membership_types"),
     path('payments/overview/', PaymentsOverview.as_view(), name="payments_overview"),
-    path('costs/', CostsViewSet.as_view({'get': 'list', 'post': 'create'})),
-    path('costs/<int:pk>/', CostsViewSet.as_view({'delete': 'destroy'})),
+    path('admin/', admin.site.urls),
 ]

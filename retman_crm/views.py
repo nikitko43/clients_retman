@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views import View
 
 from retman_api.models import Customer
-from retman_crm.forms import LoginForm, CustomerCreateForm, VisitationCreateForm, MembershipCreateForm, CostCreateForm, \
+from retman_crm.forms import LoginForm, CustomerCreateForm, VisitationCreateForm, MembershipCreateForm, \
     FreezeForm, NotesForm
 
 
@@ -63,13 +63,6 @@ class RedirectToCustomerView(View):
             if len(customer) == 1:
                 return redirect('/customer/' + str(customer[0].id))
             return redirect('/dashboard/')
-
-
-class CostsView(LoginRequiredMixin, View):
-    login_url = '/login/'
-
-    def get(self, request):
-        return render(request, 'costs.html', {'form': CostCreateForm()})
 
 
 class StatsView(LoginRequiredMixin, View):

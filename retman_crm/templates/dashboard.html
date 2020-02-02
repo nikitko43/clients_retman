@@ -13,7 +13,6 @@
 <body>
 <section class="section">
   <div class="container">
-
     <div class="modal" id="modal">
       <div class="modal-background" onclick="modal.close()"></div>
         <div class="modal-content">
@@ -62,14 +61,6 @@
         </div>
 
         <div id="visitations" class="box">
-          <h1 class="is-size-3 b-p"> Текущие посетители </h1>
-          <div v-if="Object.keys(gt).length != 0">
-            <p><b>Обычные:</b></p>
-            <div v-if="Object.keys(vs).length == 0">
-              <p>Нет посетителей</p>
-            </div>
-          </div>
-
           <div v-for="item in vs" class="visitations-line">
             <visitation
               v-bind:visitation="item"
@@ -92,9 +83,25 @@
                 >
               </visitation>
             </div>
-
           </div>
-          <div v-if="Object.keys(vs).length === 0 && Object.keys(gt).length === 0">
+
+          <div v-if="Object.keys(pt).length != 0">
+            <div>
+              <span class="gt_text">
+                <b>Персональные:</b>
+              </span>
+            </div>
+
+            <div v-for="item in pt" class="visitations-line-group">
+              <visitation
+                v-bind:visitation="item"
+                v-bind:key-v="item.id"
+                >
+              </visitation>
+            </div>
+          </div>
+
+          <div v-if="Object.keys(vs).length === 0 && Object.keys(gt).length === 0 && Object.keys(pt).length === 0">
             <p>Нет текущих посетителей</p>
           </div>
         </div>
@@ -123,7 +130,6 @@
         </div>
 
         <div class="box">
-          <a class="button is-outlined is-medium" href="/costs/">Стоимости</a> 
           <a class="button is-outlined is-medium" href="/activity/">Активность</a>
         </div>
       </div>
@@ -143,7 +149,6 @@
         </div>
 
         <div id="create_customer" class="box">
-          <h1 class="is-size-3 b-p" id="mh1">Новый посетитель</h1>
           <div id="form_customer_hide">
             <form id="form_customer" class="control">
               {% csrf_token %}
@@ -167,15 +172,7 @@
                 <label class="label">Номер телефона</label>
                 {% render_field customer_form.phone_number class+="input" autocomplete="off"%}
               </div>
-              <div class="field">
-                <label class="label">Кто привел</label>
-                {% render_field customer_form.who_advised class+="input" autocomplete="off"%}
-              </div>
-              <div class="field">
-                <label class="label">Дополнительно</label>
-                {% render_field customer_form.notes class+="input" autocomplete="off"%}
-              </div>
-              <button class="button is-info">Создать</button>
+              <button class="button is-info">Добавить нового посетителя</button>
             </form>
           </div>
         </div>

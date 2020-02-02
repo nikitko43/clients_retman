@@ -19,9 +19,9 @@ Vue.component('customer-full', {
                 </tr>
               </thead>
               <tbody>
-                <td style="font-size: 22px">{{ customer.amount_of_available_visitations }}</td>
-                <td style="font-size: 22px">{{ customer.amount_of_available_personal }}</td>
-                <td style="font-size: 22px">{{ customer.amount_of_available_group }}</td>
+                <td style="font-size: 22px">{{ customer.available.visitations }}</td>
+                <td style="font-size: 22px">{{ customer.available.personal }}</td>
+                <td style="font-size: 22px">{{ customer.available.group }}</td>
                 <td> <div>
                   <input type="checkbox" id="introducing" name="introducing" :checked="customer.introducing">
                 </div> </td>
@@ -32,8 +32,12 @@ Vue.component('customer-full', {
 
 Vue.component('membership', {
   props: ['membership'],
-  template: `<div><p>Абонемент действителен с <b>{{ membership.enrollment_date.split(' ')[0] }}</b> до 
-            <b>{{ membership.expiration_date.split(' ')[0] }} </b> 
+  template: `<div>
+            <p v-if="membership.expiration_date">Абонемент действителен с 
+              <b>{{ membership.enrollment_date.split(' ')[0] }}</b> до 
+              <b>{{ membership.expiration_date.split(' ')[0] }} </b> 
+            </p>
+            
             <p v-if="membership.freeze_start != null">Заморозка с 
             <b>{{ membership.freeze_start }}</b> до <b>{{ membership.freeze_end }}</b></p></p>
             </div>`
@@ -42,7 +46,13 @@ Vue.component('membership', {
 Vue.component('short-membership', {
   props: ['membership'],
   template: `<div><li><b>{{ membership.enrollment_date.split(' ')[0] }}</b> - 
-            <b>{{ membership.expiration_date.split(' ')[0] }}</b> </li>
+            <b>{{ membership.expiration_date.split(' ')[0] }}</b> 
+            <p v-if="membership.available_visitations || membership.available_group || membership.available_personal">
+              (осталось <b v-if="membership.available_visitations">{{ membership.available_visitations }} Т</b>
+                        <b v-if="membership.available_group">{{ membership.available_group }} ГТ</b>
+                        <b v-if="membership.available_personal">{{ membership.available_personal }} ПТ</b>)
+            </p> 
+            </li>
             </div>`
 });
 
@@ -54,6 +64,26 @@ Vue.component('visitation', {
              {{ visitation.key_number ? ', ключ - ' + visitation.key_number : '' }}
              <p style="padding-left: 22px;">{{ visitation.note }}</p></li></div>`
 });
+
+Vue.component('membership-types', {
+  props: ['types'],
+  template: `<div class="select">
+               <select v-model="selected" name="type" id="ms_types">
+                 <option v-for="type in types" :value="type.id">{{ type.name }}</option>
+               </select>
+             </div>`
+});
+
+Vue.component('trainers', {
+    props: ['trainers'],
+    template: `
+        <div class="select">
+          <select v-model="selected" name="trainer" id="trainers">
+            <option v-for="trainer in trainers" :value="trainer.id">{{ trainer.full_name }}</option>
+          </select>
+        </div>
+    `
+})
 
 var modal = {
   open: function() { document.getElementById('modal').classList.add('is-active') },
@@ -92,10 +122,10 @@ var customer_membership = new Vue({
     .get('v1/customers/' + customer_id + '/membership/')
     .then((response) => {
       this.info = response.data;
-      if (response.data.color == 0) {
+      if (response.data[0].color == 0) {
         $("#customer_membership").addClass("background-green")
       }
-      if (response.data.color == 1) {
+      if (response.data[0].color == 1) {
         $("#customer_membership").addClass("background-yellow")
       }});
   }},
@@ -112,7 +142,7 @@ var customer_memberships = new Vue({
   methods: {
   get_customer_memberships: function () {
     axios
-    .get('v1/customers/' + customer_id + '/memberships/')
+    .get('/v1/customers/' + customer_id + '/memberships/')
     .then((response) => {this.info = response.data});
   }},
   mounted: function () {this.get_customer_memberships()}
@@ -132,6 +162,38 @@ var customer_visitations = new Vue({
     .then((response) => {this.info = response.data});
   }},
   mounted: function () {this.get_customer_visitations()}
+});
+
+var membership_types = new Vue({
+  el: '#membership_types',
+  data() {
+    return {
+      info: {}
+    }
+  },
+  methods: {
+  get_membership_types: function () {
+    axios
+    .get('/v1/membership_types/')
+    .then((response) => {this.info = response.data});
+  }},
+  mounted: function () {this.get_membership_types()}
+});
+
+var trainers = new Vue({
+  el: '#trainers',
+  data() {
+    return {
+      info: {}
+    }
+  },
+  methods: {
+  get_trainers: function () {
+    axios
+    .get('/v1/trainers/')
+    .then((response) => {this.info = response.data});
+  }},
+  mounted: function () {this.get_trainers()}
 });
 
 $(document).ready(function() {
@@ -346,10 +408,6 @@ $(document).ready(function() {
         }
       }
     }
-
-    axios
-    .get('v1/costs/')
-    .then((response) => {costs = response.data; set_vs_cost(); set_ms_cost();});
 
     $("#ms_amount").on("change paste keyup", set_ms_cost);
     $("#vs_type").on("change paste keyup", set_vs_cost);

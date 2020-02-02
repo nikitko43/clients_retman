@@ -53,6 +53,7 @@ var visitations = new Vue({
   data: {
     vs: [],
     gt: [],
+    pt: [],
   },
   methods: {
   get_visitations: function () {
@@ -62,9 +63,13 @@ var visitations = new Vue({
     .then((response) => {
       this.vs = [];
       this.gt = [];
+      this.pt = [];
       for (var item of response.data){
         if (item.type == 'GT'){
           this.gt.push(item);
+        }
+        else if (item.type == 'PT') {
+          this.pt.push(item);
         }
         else {
           this.vs.push(item);

@@ -1,16 +1,19 @@
 from datetime import timedelta, datetime, date
+
+from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Count, Sum, Q
+from django.db.models import Count, Sum, Q, F
 from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from retman_api.serializers import CustomerSerializer, MembershipSerializer, VisitationSerializer, \
-    VisitationWithCustomerSerializer, VisitationHeatmapSerializer, PaymentSerializer, CostSerializer
-from retman_api.models import Customer, Membership, Visitation, Payment, Cost
+    VisitationWithCustomerSerializer, VisitationHeatmapSerializer, PaymentSerializer, \
+    MembershipTypeSerializer, TrainerSerializer
+from retman_api.models import Customer, Membership, Visitation, Payment, MembershipType, Trainer
 
 
 class CustomersViewSet(viewsets.ModelViewSet):
@@ -25,9 +28,20 @@ class TodayCustomersViewSet(viewsets.ModelViewSet):
         filter=Q(visit_customer__came_at=datetime.today()))).filter(count__gte=1)
     serializer_class = CustomerSerializer
 
+
+class MembershipTypesList(viewsets.ReadOnlyModelViewSet):
+    queryset = MembershipType.objects.all()
+    serializer_class = MembershipTypeSerializer
+
+
+class TrainersList(viewsets.ReadOnlyModelViewSet):
+    queryset = Trainer.objects.all()
+    serializer_class = TrainerSerializer
+
+
 class MembershipsList(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        return Membership.objects.filter(customer=self.kwargs['customer_id'])[:100]
+        return Membership.objects.filter(customer=self.kwargs['customer_id']).order_by('-id')[:100]
 
     serializer_class = MembershipSerializer
 
@@ -38,16 +52,8 @@ class CurrentMembershipCreate(APIView):
                                                 expiration_date__gt=timezone.now(), enrollment_date__lt=timezone.now())
         memberships.order_by('enrollment_date')
 
-        if memberships:
-            current = memberships.last()
-            days_remaining = current.expiration_date - datetime.now()
-            if days_remaining.days < 7:
-                current.color = 1
-            elif days_remaining.days >= 7:
-                current.color = 0
-            current_serializer = MembershipSerializer(current)
-            return Response(current_serializer.data, status=status.HTTP_200_OK)
-        return Response("Customer don't have a membership", status=status.HTTP_400_BAD_REQUEST)
+        serializer = MembershipSerializer(memberships, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, customer_id):
         try:
@@ -55,74 +61,73 @@ class CurrentMembershipCreate(APIView):
         except ObjectDoesNotExist:
             return Response('No such customer', status=status.HTTP_400_BAD_REQUEST)
 
-        memberships = Membership.objects.filter(customer=customer_id,
-                                                expiration_date__gt=timezone.now(), enrollment_date__lt=timezone.now())
+        membership_type = MembershipType.objects.get(id=request.data.get('type'))
 
-        memberships.order_by('enrollment_date')
+        data = request.data.copy()
+        data.update({'customer': customer_id, 'available_visitations': membership_type.visitations,
+                     'available_group': membership_type.group, 'available_personal': membership_type.personal})
 
-        if not memberships or (memberships.last().expiration_date - datetime.now()).days <= 5:
-            data = request.data.copy()
-            data.update({'customer': customer_id})
-            membership = MembershipSerializer(data=data)
-            if membership.is_valid():
-                membership_obj = membership.save()
+        membership = MembershipSerializer(data=data)
+        if membership.is_valid():
+            membership_obj = membership.save()
 
-                payment = Payment(type='MS', value=int(request.data.get('cost', 0)), customer=customer,
-                                  membership=membership_obj)
-                payment.save()
+            payment = Payment(type='MS', value=int(request.data.get('cost', 0)), customer=customer,
+                              membership=membership_obj)
+            payment.save()
 
-                return Response(membership.data, status=status.HTTP_201_CREATED)
-            return Response(membership.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response('Can not create, there is an active membership', status=status.HTTP_400_BAD_REQUEST)
+            return Response(membership.data, status=status.HTTP_201_CREATED)
+        return Response(membership.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class OpenVisitation(APIView):
     def post(self, request):
         if request.data.get('customer_id'):
-            customer_id = request.data['customer_id']
+            customer = Customer.objects.get(id=request.data['customer_id'])
         elif request.data.get('card_id'):
-            customer_id = Customer.objects.get(
-                card_id=request.data.get('card_id')).id
+            customer = Customer.objects.get(
+                card_id=request.data.get('card_id'))
         else:
             return Response('No customer specified', status=status.HTTP_400_BAD_REQUEST)
 
-        visitations = Visitation.objects.filter(
-            left_at__isnull=True, customer=customer_id)
-        customer = Customer.objects.get(pk=customer_id)
-        membership = Membership.objects.filter(customer=customer_id,
-                                               expiration_date__gt=timezone.now(), enrollment_date__lt=timezone.now())
+        def not_frozen():
+            return Q(freeze_end__isnull=True) | Q(freeze_end__lt=timezone.now())
+
+        visitations = Visitation.objects.filter(left_at__isnull=True, customer=customer)
+
+        memberships = Membership.active(customer)
 
         type = request.data.get('type')
         data = request.data.copy()
-        data.update({'customer': customer_id})
+        data.update({'customer': customer.id})
         serializer = VisitationSerializer(data=data)
 
-        if not visitations and type in ['VS', 'PT', 'GT']:
-            if membership.first():
-                freeze_end = membership.first().freeze_end
+        if not visitations and type in ['VS', 'PT', 'GT'] and serializer.is_valid():
+            if type == 'VS':
+                type_unlimited_filter = Q(type__unlimited_visitations=True)
+                available_filter = Q(available_visitations__gt=0)
+                visitations_to_decrement = 'available_visitations'
+            elif type == 'PT':
+                type_unlimited_filter = Q(type__unlimited_personal=True)
+                available_filter = Q(available_personal__gt=0)
+                visitations_to_decrement = 'available_personal'
             else:
-                freeze_end = None
+                type_unlimited_filter = Q(type__unlimited_group=True)
+                available_filter = Q(available_group__gt=0)
+                visitations_to_decrement = 'available_group'
 
-            if membership and not freeze_end and type == 'VS' and serializer.is_valid():
+            filtered_memberships = memberships.filter(not_frozen(), available_filter)
+            if memberships.filter(not_frozen(), type_unlimited_filter).exists():
                 pass
 
-            elif membership and freeze_end and freeze_end <= date.today() and type == 'VS' and serializer.is_valid():
-                pass
-
-            elif customer.amount_of_available_visitations != 0 and type == 'VS' and serializer.is_valid():
-                customer.amount_of_available_visitations -= 1
-
-            elif customer.amount_of_available_personal != 0 and type == 'PT' and serializer.is_valid():
-                customer.amount_of_available_personal -= 1
-
-            elif customer.amount_of_available_group != 0 and type == 'GT' and serializer.is_valid():
-                customer.amount_of_available_group -= 1
+            elif filtered_memberships.exists():
+                ms = filtered_memberships.order_by('expiration_date').first()
+                setattr(ms, visitations_to_decrement, F(visitations_to_decrement) - 1)
+                ms.save()
 
             else:
+                breakpoint()
                 return Response('Can not create', status=status.HTTP_400_BAD_REQUEST)
 
-            customer.save()
             serializer.save()
             return Response('OK', status=status.HTTP_200_OK)
 
@@ -171,33 +176,6 @@ class VisitationsList(viewsets.ReadOnlyModelViewSet):
         return Visitation.objects.filter(customer=self.kwargs['customer_id']).order_by('-id')[:100]
 
     serializer_class = VisitationSerializer
-
-
-class AddVisitationsView(APIView):
-    def post(self, request, customer_id):
-        try:
-            customer = Customer.objects.get(pk=customer_id)
-        except ObjectDoesNotExist:
-            return Response('No such customer', status=status.HTTP_400_BAD_REQUEST)
-
-        amount = int(request.data.get('amount', 0))
-        type = request.data.get('type')
-
-        if type == 'VS':
-            customer.amount_of_available_visitations += amount
-        elif type == 'PT':
-            customer.amount_of_available_personal += amount
-        elif type == 'GT':
-            customer.amount_of_available_group += amount
-        else:
-            return Response('No such type', status.HTTP_400_BAD_REQUEST)
-
-        customer.save()
-
-        payment = Payment(type=type, value=int(request.data.get('value', 0)), customer=customer)
-        payment.save()
-
-        return Response('OK', status.HTTP_200_OK)
 
 
 class CurrentVisitationsList(viewsets.ReadOnlyModelViewSet):
@@ -275,8 +253,8 @@ class FreezeMembership(APIView):
         days = int(request.data.get('days'))
 
         if not membership.freeze_start and 30 > days > 0:
-            membership.freeze_start = datetime.today()
-            membership.freeze_end = datetime.today() + timedelta(days=days - 1)
+            membership.freeze_start = parse(request.data.get('freeze_start'))
+            membership.freeze_end = membership.freeze_start + timedelta(days=days - 1)
             membership.expiration_date = membership.expiration_date + \
                 relativedelta(days=days)
             membership.save()
@@ -323,11 +301,6 @@ class CheckIntroducing(APIView):
             return Response('OK', status=status.HTTP_200_OK)
 
         return Response('Error happened', status=status.HTTP_400_BAD_REQUEST)
-
-
-class CostsViewSet(viewsets.ModelViewSet):
-    queryset = Cost.objects.all().order_by('-type', 'amount')
-    serializer_class = CostSerializer
 
 
 class CustomerName(APIView):

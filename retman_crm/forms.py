@@ -1,7 +1,9 @@
+from datetime import datetime
+
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 
-from retman_api.models import Customer, Visitation, Membership, Cost
+from retman_api.models import Customer, Visitation, Membership
 
 
 class LoginForm(AuthenticationForm):
@@ -36,15 +38,10 @@ class MembershipCreateForm(forms.ModelForm):
         exclude = ('customer', 'expiration_date')
 
 
-class CostCreateForm(forms.ModelForm):
-    class Meta:
-        model = Cost
-        fields = '__all__'
-
-
 class NotesForm(forms.Form):
     notes = forms.CharField(widget=forms.Textarea, required=False)
 
 
 class FreezeForm(forms.Form):
     days = forms.IntegerField()
+    freeze_start = forms.DateTimeField(initial=datetime.now())

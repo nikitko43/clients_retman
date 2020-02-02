@@ -46,9 +46,11 @@
         </div>
         <div id="customer_membership" class="box">
           <div v-if="Object.keys(info).length != 0">
-            <membership
-              v-bind:membership="info">
-            </membership>
+            <div v-for="item in info" >
+              <membership
+                v-bind:membership="item">
+              </membership>
+            </div>
           </div>
           <div v-if="Object.keys(info).length === 0">
             <p>Нет активного абонемента</p>
@@ -65,9 +67,11 @@
               <label class="label">Выданный ключ</label>
               {% render_field visitation_form.key_number|attr:"autofocus" class+="input" min="0"%}
             </div>
-            <div class="field">
-              <label class="label">Дополнительно</label>
-              {% render_field visitation_form.note class+="input"%}
+            <div class="field" id="trainers">
+              <label class="label">Тренер</label>
+              <trainers
+                v-bind:trainers="info">
+              </trainers>
             </div>
             <div class="field">
               <label class="label">Тип</label>
@@ -92,73 +96,6 @@
         </div>
 
       </form>
-    </div>
-
-    <div class="columns">
-      <div class="column">
-        <div id="create_membership" class="box membership-box">
-          <h1 class="is-size-3 b-p"> Добавить абонемент </h1>
-          <form id="form_membership" class="control">
-            {% csrf_token %}
-            <div class="field">
-              <label class="label">Количество месяцев</label>
-              {% render_field membership_form.months class+="input" id="ms_amount" min="0"%}
-            </div>
-            <div class="field">
-              <label class="label">Стоимость</label>
-              {% render_field membership_form.cost class+="input" id="ms_value" min="0"%}
-            </div>
-            <div class="field">
-              <label class="label">Дата начала абонемента</label>
-              {% render_field membership_form.enrollment_date class+="input"%}
-            </div>
-            <button class="button is-info">Добавить</button>
-          </form>
-        </div>
-      </div>
-
-      <div class="column">
-        <div id="add_visitations" class="box">
-          <h1 class="is-size-3 b-p"> Добавить посещения </h1>
-          <form id="form_add_visitations" class="control">
-            {% csrf_token %}
-            <div class="field">
-              <label class="label">Количество</label>
-              <input type="number" min="0" step="1" name="amount" id="vs_amount" class="input">
-            </div>
-            <div class="field">
-              <label class="label">Тип</label>
-              <div class="select">
-                <select name="type" id="vs_type">
-                  <option value="VS" selected>Обычные</option>
-                  <option value="PT">Персональные тренировки</option>
-                  <option value="GT">Групповые тренировки</option>
-                </select>
-              </div>
-            </div>
-            <div class="field">
-              <label class="label">Стоимость</label>
-              <input type="number" min="0" step="1" name="value" id="vs_value" class="input">
-            </div>
-            <button class="button is-info">Добавить</button>
-          </form>
-        </div>
-      </div>
-
-      <div class="column">
-        <div id="freeze" class="box">
-          <h1 class="is-size-3 b-p"> Заморозить абонемент </h1>
-          <form id="form_freeze" class="control">
-            {% csrf_token %}
-            <div class="field">
-              <label class="label">Количество дней</label>
-              <input type="number" min="0" step="1" name="days" class="input">
-            </div>
-            <button class="button is-info">Заморозить</button>
-          </form>
-        </div>
-      </div>
-
     </div>
 
     <div id="customer_memberships" class="box">
@@ -193,7 +130,53 @@
       </div>  
     </div>
 
+    <div class="columns">
+      <div class="column">
+        <div id="create_membership" class="box membership-box">
+          <h1 class="is-size-3 b-p"> Добавить абонемент </h1>
+          <form id="form_membership" class="control">
+            {% csrf_token %}
+            <div class="field" id="membership_types">
+              <label class="label">Тип</label>
+              <membership-types
+                v-bind:types="info">
+              </membership-types>
+            </div>
+            <div class="field">
+              <label class="label">Стоимость</label>
+              {% render_field membership_form.cost class+="input" id="ms_value" min="0"%}
+            </div>
+            <div class="field">
+              <label class="label">Дата начала абонемента</label>
+              {% render_field membership_form.enrollment_date class+="input"%}
+            </div>
+            <button class="button is-info">Добавить</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="column is-one-third">
+        <div id="freeze" class="box">
+          <h1 class="is-size-3 b-p"> Заморозить абонемент </h1>
+          <form id="form_freeze" class="control">
+            {% csrf_token %}
+            <div class="field">
+              <label class="label">Количество дней</label>
+              <input type="number" min="0" step="1" name="days" class="input">
+            </div>
+            <div class="field">
+              <label class="label">Дата начала заморозки</label>
+              {% render_field freeze_form.freeze_start class+="input"%}
+            </div>
+            <button class="button is-info">Заморозить</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
   </div>
+
 </section>
 
   <script src="{% static "retman_crm/jquery-3.3.1.min.js" %}"></script>
