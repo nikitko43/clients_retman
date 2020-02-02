@@ -26,6 +26,10 @@ body {
     min-width: 35px;
 }
 
+.red {
+    color: red;
+}
+
 #all_customers {
     max-height: 335px;
     overflow: scroll;

@@ -33,7 +33,7 @@ class CustomerCreateForm(forms.ModelForm):
 class MembershipCreateForm(forms.ModelForm):
     class Meta:
         model = Membership
-        exclude = ('customer', 'enrollment_date', 'expiration_date')
+        exclude = ('customer', 'expiration_date')
 
 
 class CostCreateForm(forms.ModelForm):

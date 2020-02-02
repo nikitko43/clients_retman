@@ -1,18 +1,29 @@
-const instance = axios.create({ baseURL: 'http://127.0.0.1:8000' });
+const instance = axios.create({ baseURL: 'https://clients.retman.ru/' });
+
+Vue.prototype.moment = moment
 
 Vue.component('customer', {
   props: ['customer'],
-  template: `<b><b class="has-text-grey-light">{{ customer.card_id }}</b>
-             <a :c_id="customer.id" onclick="click_view_customer(this)">{{ customer.full_name }}</a></b>`
+  template: '<b><b class="has-text-grey-light">{{ customer.card_id }}</b><a :c_id="customer.id" onclick="click_view_customer(this)">{{ customer.full_name }}</a></b>'
 });
 
 Vue.component('visitation', {
   props: ['visitation'],
   template: `<p> <b class="has-text-grey-light">{{ visitation.customer.card_id }}</b>
-             <b><a :c_id="visitation.customer.id" onclick="click_view_customer(this)">
-             {{ visitation.customer.full_name }}</a></b>
+             <b>
+             <a v-if="Math.abs(moment.duration(moment(visitation.came_at, 'DD/MM/YYYY HH:mm:ss').diff(moment())).hours()) <= 2" :c_id="visitation.customer.id" onclick="click_view_customer(this)">
+             {{ visitation.customer.full_name }}</a>
+             <a v-else :c_id="visitation.customer.id" class="red" onclick="click_view_customer(this)">
+             {{ visitation.customer.full_name }}</a>
+             </b>
              <a :c_id="visitation.customer.id" 
-             onclick="click_close_visitation(this)" class="delete is-pulled-right"></a> </p>`
+             onclick="click_close_visitation(this)" class="delete is-pulled-right"></a> </p>
+             `
+});
+
+Vue.component('payment', {
+    props: ['payment'],
+    template: '<p v-if="payment.customer"><b>{{ payment.customer.full_name }}</b> ({{ payment.customer.card_id }}) - {{ payment.value }}, {{ payment.date }}</p>'
 });
 
 var customers = new Vue({
@@ -24,9 +35,14 @@ var customers = new Vue({
   },
   methods: {
   get_customers: function () {
-    axios
-    .get('v1/customers/')
-    .then((response) => {this.info = response.data});
+    $.ajax({
+      type: 'GET',
+      url: '/v1/customers/',
+      processData: false,
+      contentType: false,
+
+      success: (result) => {this.info = result}
+    });
   }},
   mounted: function () {this.get_customers()}
 });
@@ -40,6 +56,7 @@ var visitations = new Vue({
   },
   methods: {
   get_visitations: function () {
+
     axios
     .get('v1/visitations/')
     .then((response) => {
@@ -58,10 +75,40 @@ var visitations = new Vue({
   mounted: function () {this.get_visitations()}
 });
 
+var payments = new Vue({
+  el: '#payments',
+  data: {
+    items: [],
+  },
+  methods: {
+  get_payments: function () {
+    axios
+    .get('v1/payments/')
+    .then((response) => {
+      this.items = response.data;
+    });
+  }},
+  mounted: function () {this.get_payments()}
+});
+
 function click_view_customer(button) {
   c_id = $(button).attr('c_id');
 
-  window.location.href = "http://gym.nikitko.ru/customer/" + c_id;
+  window.location.href = "https://clients.retman.ru/customer/" + c_id;
+}
+
+function checkPasswordCash(){
+  if ($("#pswd_cash").val() == 'drop'){
+    $.getJSON('/v1/cash', function(data){
+      $("#cash_history").html('');
+      $.each(data['actions'], function(i, e){
+        $("#cash_history").append("<p>" + e + "</p>");
+      });
+    });
+  }
+  else {
+    $("#cash_history").html('');
+  }
 }
 
 function click_close_group_all() {
@@ -98,6 +145,10 @@ $(document).ready(function() {
       $('#form_customer_hide').toggleClass('is-hidden');
     });
 
+    $("#mh2").click(function(){
+      $('#all_customers').toggleClass('is-hidden');
+    });
+
     $("#add_visitation").click(function(){
       $(".modal").addClass('is-active');
     });
@@ -125,6 +176,20 @@ $(document).ready(function() {
               alert('Ошибка')
             }
         });
+    });
+
+    var form_cash = $("#form_cash");
+    form_cash.on('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        $.ajax({
+            type: 'POST',
+            url: '/v1/cash/',
+            data: formData,
+            processData: false,
+            contentType: false,
+        });
+        $("#pswd_cash").val("");
     });
 
     var form_customer = $("#form_customer");

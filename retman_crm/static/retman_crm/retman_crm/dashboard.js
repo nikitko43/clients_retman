@@ -1,5 +1,7 @@
 const instance = axios.create({ baseURL: 'http://gym.nikitko.ru/' });
 
+Vue.prototype.moment = moment
+
 Vue.component('customer', {
   props: ['customer'],
   template: `<b><b class="has-text-grey-light">{{ customer.card_id }}</b>
@@ -9,8 +11,16 @@ Vue.component('customer', {
 Vue.component('visitation', {
   props: ['visitation'],
   template: `<p> <b class="has-text-grey-light">{{ visitation.customer.card_id }}</b>
-             <b><a :c_id="visitation.customer.id" onclick="click_view_customer(this)">
-             {{ visitation.customer.full_name }}</a></b>
+             <b>
+             <div v-if="Math.abs(moment.duration(moment(visitation.came_at, "DD/MM/YYYY HH:mm:ss").diff(moment())).hours()) <= 2">
+             <a :c_id="visitation.customer.id" onclick="click_view_customer(this)">
+             {{ visitation.customer.full_name }}</a>
+             </div>
+             <div v-else>
+             <a :c_id="visitation.customer.id" class="red" onclick="click_view_customer(this)">
+             {{ visitation.customer.full_name }}</a>
+             </div>
+             </b>
              <a :c_id="visitation.customer.id" 
              onclick="click_close_visitation(this)" class="delete is-pulled-right"></a> </p>`
 });

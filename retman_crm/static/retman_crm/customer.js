@@ -1,6 +1,6 @@
 var splitted_url = window.location.pathname.split('/');
 var customer_id = splitted_url[splitted_url.length - 1];
-const instance = axios.create({ baseURL: 'http://127.0.0.1:8000' });
+const instance = axios.create({ baseURL: 'https://clients.retman.ru/' });
 
 Vue.component('customer-full', {
   props: ['customer'],
@@ -15,12 +15,16 @@ Vue.component('customer-full', {
                   <th>Обычные</th>
                   <th>Персональные</th>
                   <th>Групповые</abbr></th>
+                  <th>Вводная</th>
                 </tr>
               </thead>
               <tbody>
-                <td>{{ customer.amount_of_available_visitations }}</td>
-                  <td>{{ customer.amount_of_available_personal }}</td>
-                  <td>{{ customer.amount_of_available_group }}</td>
+                <td style="font-size: 22px">{{ customer.amount_of_available_visitations }}</td>
+                <td style="font-size: 22px">{{ customer.amount_of_available_personal }}</td>
+                <td style="font-size: 22px">{{ customer.amount_of_available_group }}</td>
+                <td> <div>
+                  <input type="checkbox" id="introducing" name="introducing" :checked="customer.introducing">
+                </div> </td>
               </tbody>
             </table>
             </div>`
@@ -67,8 +71,10 @@ var customer = new Vue({
   get_customer: function () {
     axios
     .get('v1/customers/' + customer_id + '/')
-    .then((response) => {this.info = response.data;
-                         $("#notes").val(response.data.notes)});
+    .then((response) => {
+      this.info = response.data;
+      $("#notes").val(response.data.notes);
+    });
   }},
   mounted: function () {this.get_customer()}
 });
@@ -84,7 +90,14 @@ var customer_membership = new Vue({
   get_customer_membership: function () {
     axios
     .get('v1/customers/' + customer_id + '/membership/')
-    .then((response) => {this.info = response.data});
+    .then((response) => {
+      this.info = response.data;
+      if (response.data.color == 0) {
+        $("#customer_membership").addClass("background-green")
+      }
+      if (response.data.color == 1) {
+        $("#customer_membership").addClass("background-yellow")
+      }});
   }},
   mounted: function () {this.get_customer_membership()}
 });
@@ -164,7 +177,27 @@ $(document).ready(function() {
       $(".modal").addClass('is-active');
     });
 
-        //Get camera video
+    $("#introducing").click( function(){
+      if( $(this).is(':checked') ){ 
+        let formdata = new FormData();
+        formdata.append("csrfmiddlewaretoken", document.getElementById('form_membership').firstElementChild.value);
+        formdata.append("check", "check");
+        $.ajax({
+          type: 'POST',
+          url: '/v1/customers/' + customer_id + '/introducing/',
+          data: formdata,
+          processData: false,
+          contentType: false,
+          success: (result) => {
+            console.log(result);
+          }
+        });
+      }
+      else {
+        this.checked = true;
+      }
+    });
+
     navigator.mediaDevices.getUserMedia({video: {width: 600, height: 600}, audio: false})
         .then(stream => {
             v.srcObject = stream;
@@ -187,7 +220,7 @@ $(document).ready(function() {
             contentType: false,
 
             success: (result) => {
-              window.location.href = "http://gym.nikitko.ru/dashboard/";
+              window.location.href = "https://clients.retman.ru/dashboard/";
             },
 
             error: (result) => {

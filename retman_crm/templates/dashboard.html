@@ -8,7 +8,7 @@
   <title>Панель управления</title>
   <link rel="stylesheet" type="text/css" href="{% static "retman_crm/styles.css" %}">
   <link rel="stylesheet" type="text/css" href="{% static "retman_crm/bulma.css" %}">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=0.5">
 </head>
 <body>
 <section class="section">
@@ -49,10 +49,10 @@
             {% csrf_token %}
             <div class="field has-addons">
               <div class="control is-expanded">
-                <input type="number" min="0" step="1" name="card_id" class="input is-large" id="card_id" >
+                <input name="card_id" class="input is-large" id="card_id" autofocus autocomplete="off">
               </div>
               <div class="control">
-                <button class="button is-info is-large"> Найти по ID </button>
+                <button class="button is-info is-large">Найти по ID</button>
               </div>
               <div class="control">
                 <a class="button is-info is-large is-outlined" id="add_visitation">+</a>
@@ -70,7 +70,7 @@
             </div>
           </div>
 
-          <div v-for="item in vs">
+          <div v-for="item in vs" class="visitations-line">
             <visitation
               v-bind:visitation="item"
               v-bind:key-v="item.id">
@@ -85,10 +85,11 @@
               </span>
             </div>
 
-            <div v-for="item in gt">
+            <div v-for="item in gt" class="visitations-line-group">
               <visitation
                 v-bind:visitation="item"
-                v-bind:key-v="item.id">
+                v-bind:key-v="item.id"
+                >
               </visitation>
             </div>
 
@@ -99,8 +100,8 @@
         </div>
 
         <div id="customers" class="box">
-          <h1 class="is-size-3 b-p"> Все посетители </h1>
-          <div id="all_customers">
+          <h1 class="is-size-3 b-p" id="mh2"> Все посетители </h1>
+          <div id="all_customers" class="is-hidden">
             <div v-for="item in info">
               <customer
                 v-bind:customer="item"
@@ -109,9 +110,38 @@
             </div>
           </div>
         </div>
+
+        <div class="box">
+          <div id="payments">
+            <div v-for="item in items">
+              <payment
+                v-bind:payment="item"
+                v-bind:key-b="item.id">
+              </payment>
+            </div>
+          </div>
+        </div>
+
+        <div class="box">
+          <a class="button is-outlined is-medium" href="/costs/">Стоимости</a> 
+          <a class="button is-outlined is-medium" href="/activity/">Активность</a>
+        </div>
       </div>
 
       <div class="column">
+        <div class="box">
+          <form action="/v1/cash/" id="form_cash" method="POST">
+            {% csrf_token %}
+            <div class="field">
+              <div class="control is-expanded">
+                <input name="action" onkeyup="checkPasswordCash()" id="pswd_cash" class="input is-large" autocomplete="off">
+              </div>
+            </div>
+          </form>
+          <div id="cash_history">
+          </div>
+        </div>
+
         <div id="create_customer" class="box">
           <h1 class="is-size-3 b-p" id="mh1">Новый посетитель</h1>
           <div id="form_customer_hide">
@@ -119,7 +149,7 @@
               {% csrf_token %}
               <div class="field">
                 <label class="label">ID карты</label>
-                {% render_field customer_form.card_id class+="input" min="0"%}
+                {% render_field customer_form.card_id class+="input" min="0" autocomplete="off"%}
               </div>
               <div class="field">
                 <label class="label">ФИО</label>
@@ -130,16 +160,16 @@
                 {% render_field customer_form.birth_date class+="input" autocomplete="off"%}
               </div>
               <div class="field">
-                <label class="label">Кто привел</label>
-                {% render_field customer_form.who_advised class+="input" autocomplete="off"%}
+                <label class="label">Серия и номер паспорта</label>
+                {% render_field customer_form.passport class+="input" autocomplete="off"%}
               </div>
               <div class="field">
                 <label class="label">Номер телефона</label>
                 {% render_field customer_form.phone_number class+="input" autocomplete="off"%}
               </div>
               <div class="field">
-                <label class="label">Серия и номер паспорта</label>
-                {% render_field customer_form.passport class+="input" autocomplete="off"%}
+                <label class="label">Кто привел</label>
+                {% render_field customer_form.who_advised class+="input" autocomplete="off"%}
               </div>
               <div class="field">
                 <label class="label">Дополнительно</label>
@@ -152,16 +182,12 @@
       </div>
     </div>
 
-    <div class="box">
-      <a class="button is-outlined is-medium" href="/costs/">Стоимости</a> 
-      <a class="button is-outlined is-medium" href="/activity/">Активность</a>
-    </div>
-
 </section>
 
 <script src="{% static "retman_crm/js.cookie.min.js" %}"></script>
 <script src="{% static "retman_crm/jquery-3.3.1.min.js" %}"></script>
 <script src="{% static "retman_crm/axios.min.js" %}"></script>
+<script src="{% static "retman_crm/moment.js" %}"></script>
 <script src="{% static "retman_crm/vue.js" %}"></script>
 <script src="{% static "retman_crm/dashboard.js" %}"></script>
 </body>

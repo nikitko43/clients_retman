@@ -63,7 +63,7 @@
             {% csrf_token %}
             <div class="field">
               <label class="label">Выданный ключ</label>
-              {% render_field visitation_form.key_number class+="input" min="0"%}
+              {% render_field visitation_form.key_number|attr:"autofocus" class+="input" min="0"%}
             </div>
             <div class="field">
               <label class="label">Дополнительно</label>
@@ -82,7 +82,6 @@
     </div>
 
     <div id="customer_notes" class="box">
-      <h1 class="is-size-3 b-p"> Дополнительная информация </h1>
       <form id="form_notes" class="control">
         {% csrf_token %}
         <div class="field">
@@ -109,6 +108,10 @@
               <label class="label">Стоимость</label>
               {% render_field membership_form.cost class+="input" id="ms_value" min="0"%}
             </div>
+            <div class="field">
+              <label class="label">Дата начала абонемента</label>
+              {% render_field membership_form.enrollment_date class+="input"%}
+            </div>
             <button class="button is-info">Добавить</button>
           </form>
         </div>
@@ -124,10 +127,6 @@
               <input type="number" min="0" step="1" name="amount" id="vs_amount" class="input">
             </div>
             <div class="field">
-              <label class="label">Стоимость</label>
-              <input type="number" min="0" step="1" name="value" id="vs_value" class="input">
-            </div>
-            <div class="field">
               <label class="label">Тип</label>
               <div class="select">
                 <select name="type" id="vs_type">
@@ -136,6 +135,10 @@
                   <option value="GT">Групповые тренировки</option>
                 </select>
               </div>
+            </div>
+            <div class="field">
+              <label class="label">Стоимость</label>
+              <input type="number" min="0" step="1" name="value" id="vs_value" class="input">
             </div>
             <button class="button is-info">Добавить</button>
           </form>

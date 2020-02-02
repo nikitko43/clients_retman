@@ -59,6 +59,9 @@ class RedirectToCustomerView(View):
             customer = Customer.objects.get(card_id=request.POST['card_id'])
             return redirect('/customer/' + str(customer.id))
         except:
+            customer = Customer.objects.filter(full_name__istartswith=str(request.POST['card_id']))
+            if len(customer) == 1:
+                return redirect('/customer/' + str(customer[0].id))
             return redirect('/dashboard/')
 
 

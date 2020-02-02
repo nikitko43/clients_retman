@@ -10,6 +10,15 @@
     height: 379px;
 }
 
+input[type=checkbox] {
+  transform: scale(1.2);
+}
+
+#cash_history p:first-child {
+  font-size: 3rem;
+  padding-top: 15px;
+}
+
 #notes {
     height: 150px;
 }
@@ -43,6 +52,14 @@ body {
     height: 100% !important;
 }
 
+.visitations-line:nth-child(even){
+    background: #F5F5F5;
+}
+
+.visitations-line-group:nth-child(even){
+    background: #F5F5F5;
+}
+
 .table {
     width: 100%;
 }
@@ -52,7 +69,23 @@ body {
     min-width: 35px;
 }
 
+.red {
+    color: red !important;
+}
+
 #all_customers {
     max-height: 335px;
     overflow: scroll;
+}
+
+#pswd {
+    margin-bottom: 20px;
+}
+
+.background-green {
+    background-color: #bde8b4 !important;
+}
+
+.background-yellow {
+    background-color: #fff991 !important;
 }

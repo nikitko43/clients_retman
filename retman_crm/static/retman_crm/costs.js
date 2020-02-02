@@ -1,5 +1,5 @@
 var csrftoken = Cookies.get('csrftoken');
-const instance = axios.create({ baseURL: 'http://127.0.0.1:8000' });
+const instance = axios.create({ baseURL: 'https://clients.retman.ru/' });
 
 Vue.component('simple', {
   props: ['item'],

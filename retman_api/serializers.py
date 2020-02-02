@@ -11,6 +11,7 @@ class CustomerSerializer(ModelSerializer):
 
 
 class MembershipSerializer(ModelSerializer):
+    color = serializers.IntegerField(read_only=True)
     class Meta:
         model = Membership
         fields = '__all__'
@@ -32,7 +33,15 @@ class VisitationWithCustomerSerializer(ModelSerializer):
         fields = '__all__'
 
 
+class PaymentCustomerSerializer(ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ['id', 'full_name', 'card_id']
+
+
 class PaymentSerializer(ModelSerializer):
+    customer = PaymentCustomerSerializer()
+
     class Meta:
         model = Payment
         fields = '__all__'

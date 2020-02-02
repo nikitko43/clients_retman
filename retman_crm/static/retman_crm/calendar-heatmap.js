@@ -1,7 +1,7 @@
 
 function calendarHeatmap() {
   // defaults
-  var width = 1000;
+  var width = 1100;
   var height = 180;
   var legendWidth = 150;
   var selector = 'body';

@@ -1,4 +1,7 @@
+from math import floor
+
 from django.db import models
+from django.db.models.functions import Trunc
 from django.utils import timezone
 
 
@@ -13,6 +16,7 @@ class Customer(models.Model):
     phone_number = models.CharField(max_length=50, null=True, blank=True)
     photo = models.FileField(upload_to=image_upload, null=True, blank=True, verbose_name='Фотография')
     who_advised = models.IntegerField(blank=True, null=True)
+    introducing = models.BooleanField(default=False)
     amount_of_available_visitations = models.IntegerField(default=0)
     amount_of_available_personal = models.IntegerField(default=0)
     amount_of_available_group = models.IntegerField(default=0)
@@ -26,7 +30,7 @@ class Customer(models.Model):
 class Membership(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='customer')
     enrollment_date = models.DateTimeField(default=timezone.now)
-    months = models.IntegerField(default=1)
+    months = models.FloatField(default=1.0)
     freeze_start = models.DateField(blank=True, null=True)
     freeze_end = models.DateField(blank=True, null=True)
     expiration_date = models.DateTimeField(null=True)
@@ -34,7 +38,9 @@ class Membership(models.Model):
 
     def save(self, *args, **kwargs):
         from dateutil.relativedelta import relativedelta
+        months = floor(self.months)
         self.expiration_date = self.enrollment_date + relativedelta(months=self.months)
+        self.expiration_date = self.expiration_date.replace(hour=23, minute=59, second=59)
         super(Membership, self).save(*args)
 
     def __str__(self):
@@ -57,6 +63,8 @@ class Payment(models.Model):
     type = models.CharField(max_length=30, choices=type_choices)
     value = models.IntegerField()
     date = models.DateTimeField(default=timezone.now)
+    customer = models.ForeignKey(Customer, null=True, blank=True, on_delete=models.CASCADE)
+    membership = models.ForeignKey(Membership, null=True, blank=True, on_delete=models.CASCADE)
 
 
 class Cost(models.Model):

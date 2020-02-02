@@ -19,7 +19,9 @@
       </div>
     </a>
     <div class="box" id="stats">
-      <h1 class="is-size-3 b-p"> Статистика </h1>
+      <input class="input" onkeyup="checkPassword()" id="pswd" type="password" autocomplete="off">
+      <div class="is-hidden" id="stats-container">
+        <h1 class="is-size-3 b-p"> Статистика </h1>
         <stats
           v-bind:data="info">
         </stats>
@@ -29,6 +31,7 @@
 </section>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="{% static "retman_crm/stats.js" %}"></script>
 </body>

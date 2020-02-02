@@ -1,4 +1,4 @@
-const instance = axios.create({ baseURL: 'http://gym.nikitko.ru/' });
+const instance = axios.create({ baseURL: 'https://clients.retman.ru/' });
 $(document).ready(function() {
   var heatmap;
   axios
