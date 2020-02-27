@@ -1,0 +1,105 @@
+@charset "utf-8";
+@import "~bulma/bulma";
+
+$size-8: 0.5rem !default
+
+$sizes: (
+	1,
+	2,
+	3,
+	4,
+	5,
+	6,
+	7,
+    8
+);
+$positions: (
+	"top",
+	"left",
+	"bottom",
+	"right"
+);
+
+$bulmaSizes: (
+	$size-1,
+	$size-2,
+	$size-3,
+	$size-4,
+	$size-5,
+	$size-6,
+	$size-7,
+    $size-8,
+);
+$i: 1;
+@each $size in $sizes {
+	$sizee: nth($bulmaSizes, $i);
+	$i: $i+1;
+	.has-margin-#{$size} {
+		margin: $sizee !important;
+	}
+	.has-negative-margin-#{$size} {
+		margin: -$sizee !important;
+	}
+	.has-padding-#{$size} {
+		padding: $sizee !important;
+	}
+	@each $position in $positions {
+		.has-margin-#{$position}-#{$size} {
+			margin-#{$position}: $sizee !important;
+		}
+		.has-padding-#{$position}-#{$size} {
+			padding-#{$position}: $sizee !important;
+		}
+		.has-negative-margin-#{$position}-#{$size} {
+			margin-#{$position}: -$sizee !important;
+		}
+	}
+}
+
+.panel {
+  .panel-heading {
+    padding: 0.5em 0.75em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .panel-block {
+    padding: 0.3em 0.75em;
+    display: block;
+  }
+
+  .panel-body-customers {
+    max-height: 500px;
+    overflow-y: scroll;
+  }
+}
+
+.card-id {
+  display: inline-block;
+  width: 34px;
+  color: darkgray;
+  font-weight: bold;
+}
+
+.name {
+  font-weight: bold;
+}
+
+.back-arrow {
+  color: black;
+  font-size: 32px;
+  display: block;
+}
+
+.background-green {
+    background-color: #bde8b4 !important;
+}
+
+.background-yellow {
+    background-color: #fff991 !important;
+}
+
+.border-right {
+  border-right: 1px #dedede solid;
+}

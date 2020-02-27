@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'retman_api',
     'retman_crm',
     'retman_api_cash',
-    'widget_tweaks',
+    'frontend',
     'psycopg2',
 ]
 

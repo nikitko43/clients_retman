@@ -125,7 +125,6 @@ class OpenVisitation(APIView):
                 ms.save()
 
             else:
-                breakpoint()
                 return Response('Can not create', status=status.HTTP_400_BAD_REQUEST)
 
             serializer.save()
