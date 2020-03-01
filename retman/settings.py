@@ -82,11 +82,11 @@ WSGI_APPLICATION = 'retman.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'gym',
-        'USER': 'gym',
-        'PASSWORD': 'retman',
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': os.getenv('DB_NAME', 'gym'),
+        'USER': os.getenv('DB_USER', 'gym'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'retman'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 
