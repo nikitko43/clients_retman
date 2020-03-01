@@ -23,13 +23,13 @@ RUN ulimit -n 1000 && apt-get update && apt-get install -y gettext libgettextpo-
 
 RUN apt-get install -y postgresql-contrib
 
-COPY ./ $APP_HOME
+ENV APP_HOME /usr/src/app
 
-RUN chmod 777 -R /var/log/postgresql && chmod 777 -R /var/run/postgresql && chmod 777 -R $APP_HOME && chmod 777 -R /usr/local
+COPY ./ $APP_HOME
 
 RUN ulimit -n 1000 && pip install --default-timeout=200 -r $APP_HOME/requirements.txt
 
-RUN ulimit -n 1000 && curl -sL https://deb.nodesource.com/setup_6.x | bash -
+RUN ulimit -n 1000 && curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN ulimit -n 1000 \
   && apt-get install -qqy \
        nodejs \
