@@ -10,8 +10,9 @@ const Membership = ({membership, active}) => {
                      [membership.available_personal, " персональных"]].filter(i => i[0]).map(i => i[0]+i[1]).join(', ');
 
   return (
-    <p className={active && "is-size-3"}>
-      {name ? name : 'Абонемент'} до {moment(membership.expiration_date, 'DD/MM/YYYY HH:mm:ss').format('LL')}
+    <p className={active && "is-size-5"}>
+      {name ? name : 'Абонемент'} с <b>{moment(membership.enrollment_date, 'DD/MM/YYYY HH:mm:ss').format('LL')} </b>
+      до <b>{moment(membership.expiration_date, 'DD/MM/YYYY HH:mm:ss').format('LL')}</b>
       {membership.available_visitations || membership.available_group || membership.available_personal
         ?
         <span>
@@ -20,6 +21,8 @@ const Membership = ({membership, active}) => {
         :
         ''
       }
+      {membership.freeze_start && ', заморозка с ' + moment(membership.freeze_start, 'DD/MM/YYYY HH:mm:ss').format('LL') +
+       ' до ' + moment(membership.freeze_end, 'DD/MM/YYYY HH:mm:ss').format('LL')}
     </p>
   );
 };
@@ -27,20 +30,23 @@ const Membership = ({membership, active}) => {
 const CurrentMemberships = ({memberships}) => {
   const [opened, setOpened] = useState(false);
   const current_time = moment();
-  const active_memberships = memberships.filter(i => moment(i.expiration_date) >= current_time);
+  const active_memberships = memberships.filter(i => moment(i.expiration_date, 'DD/MM/YYYY HH:mm:ss') >= current_time);
   const rest = memberships.filter(i => moment(i.expiration_date, 'DD/MM/YYYY HH:mm:ss') < current_time);
 
   const toggleMemberships = () => {
     setOpened(!opened);
   };
 
-  const color = memberships[0] && memberships[0].color;
+  const color = active_memberships[0] && active_memberships[0].color;
   const colorClass = (color === 0 ? 'background-green' : (color === 1 ? 'background-green' : ''));
 
   return (
     <div className={"box " + colorClass}>
-      {active_memberships.map(membership => <Membership membership={membership} active />)}
-      {rest.length &&
+      {active_memberships.length ?
+        active_memberships.map(membership => <Membership membership={membership} active />) :
+        'Нет абонемента'
+      }
+      {rest.length ?
         <>
           <p className="has-margin-top-4 has-text-grey" onClick={toggleMemberships}>
             Прошлые абонементы
@@ -52,6 +58,8 @@ const CurrentMemberships = ({memberships}) => {
             </div>
           }
         </>
+        :
+        ''
       }
     </div>
   );

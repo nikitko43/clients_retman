@@ -1,6 +1,6 @@
 from django.urls import path
 
-from retman_crm.views import CustomerView, DashboardView, RedirectToCustomerView, RetmanLoginView, StatsView, \
+from retman_crm.views import CustomerView, DashboardView, StatsView, \
     ActivityView
 
 app_name = 'retman_crm'

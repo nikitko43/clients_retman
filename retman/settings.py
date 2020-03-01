@@ -137,9 +137,9 @@ USE_TZ = False
 
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'retman', 'media')
 
-STATIC_ROOT = '/root/gym/retman_crm/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'retman', 'static')
 
 STATIC_URL = '/static/'
 

@@ -31,6 +31,7 @@
     "bulma": "^0.8.0",
     "copy-webpack-plugin": "^5.1.1",
     "django-react-csrftoken": "^1.0.4",
-    "moment": "^2.24.0"
+    "moment": "^2.24.0",
+    "pretty-checkbox": "^3.0.3"
   }
 }

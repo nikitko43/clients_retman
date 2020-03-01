@@ -32,6 +32,10 @@ export const trainers = axios.create({
     headers: { Accept: '*/*' }
 });
 
+export const new_customer = (data) => {
+    return customers.post('/', data);
+};
+
 export const get_customers = () => {
     return customers.get('/');
 };
@@ -40,8 +44,16 @@ export const get_customer = (id) => {
     return customers.get(`${id}/`);
 };
 
+export const change_customer = (id, data) => {
+    return customers.post(`${id}/`, data, {headers: {'X-HTTP-Method-Override': 'PATCH'}});
+};
+
 export const get_customer_memberships = (id) => {
     return customers.get(`${id}/memberships/`);
+};
+
+export const get_customer_visitations = (id) => {
+    return customers.get(`${id}/visitations/`);
 };
 
 export const get_visitations = () => {
@@ -58,4 +70,21 @@ export const get_trainers = () => {
 
 export const open_visitation = (data) => {
     return visitations.post('/open/', data);
+};
+
+export const set_customer_introducing = (customer_id, data) => {
+    const headers = { 'X-CSRFTOKEN': getCookie('csrftoken') };
+    return customers.post(`/${customer_id}/introducing/`, data, {headers: headers});
+};
+
+export const get_membership_types = () => {
+    return axios.get('/api/v1/membership_types/');
+};
+
+export const create_membership = (customer_id, data) => {
+    return customers.post(`${customer_id}/membership/`, data)
+};
+
+export const freeze_membership = (customer_id, data) => {
+    return customers.post(`${customer_id}/membership/freeze/`, data)
 };

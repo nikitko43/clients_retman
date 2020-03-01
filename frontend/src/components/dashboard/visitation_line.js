@@ -7,13 +7,15 @@ const VisitationLine = ({visitation, onClose}) => {
   const {customer} = visitation;
 
   const close_visitation = (id) => {
-    close_customer_visitation(id).then(onClose());
+    close_customer_visitation(id).then((response) => onClose());
   };
 
   return (
     <p className="panel-block">
       <b className="card-id">{ customer.card_id }</b>
-      <b><a href={`/react/customer/${customer.id}`} className={(overdue ? 'red' : '')}> {customer.full_name} </a></b>
+      <b className="flex-grow-1">
+        <a href={`/customer/${customer.id}`} className={(overdue ? 'red' : '')}> {customer.full_name} </a>
+      </b>
       <a className="delete is-pulled-right" onClick={() => close_visitation(customer.id)} />
     </p>
   );

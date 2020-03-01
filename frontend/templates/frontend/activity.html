@@ -1,0 +1,55 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Активность</title>
+  <link rel="stylesheet" type="text/css" href="{% static "frontend/heatmap/calendar-heatmap.css" %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+<section class="section">
+  <div class="container">
+    <a href="/dashboard/react/">
+      <div>
+        <img border="0" src="{% static "frontend/heatmap/arrow.png" %}" width="25" height="25" class="b-p-img"
+             style="padding-top: 30px; padding-left: 30px;">
+      </div>
+    </a>
+    <div id="chart-one">
+    </div>
+  </div>
+</section>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="{% static "frontend/heatmap/moment.js" %}"></script>
+<script src="{% static "frontend/heatmap/calendar-heatmap.js" %}"></script>
+<script>
+  var heatmap;
+  axios
+  .get('v1/visitations/get_data_heatmap/')
+  .then((response) => {
+    heatmap = response.data;
+    var chart1 = calendarHeatmap()
+                  .data(heatmap)
+                  .selector('#chart-one')
+                  .colorRange(['#d4edf4', '#004459'])
+                  .tooltipEnabled(true)
+                  .onClick(function (data) {
+                    console.log('onClick callback. Data:', data);
+                  })
+                  .legendEnabled(false)
+                  .locale({
+                    months: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сен', 'Окт', 'Нояб', 'Дек'],
+                    days: ['', '', '', '', '', '', ''],
+                    No: 'Нет',
+                    on: ' ',
+                    Less: '',
+                    More: 'Больше'
+                  });
+    chart1();
+    })
+    .catch(error => console.log(error));
+</script>
+</body>

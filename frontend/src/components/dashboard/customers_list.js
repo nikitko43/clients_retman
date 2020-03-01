@@ -5,18 +5,13 @@ const Customer = ({customer}) => {
   return (
     <p className="panel-block">
       <span className="card-id">{ customer.card_id }</span>
-      <a href={`/react/customer/${customer.id}`} className="name">{ customer.full_name }</a>
+      <a href={`/customer/${customer.id}`} className="name">{ customer.full_name }</a>
     </p>
   );
 };
 
-const CustomersList = () => {
-  const [customers, setCustomers] = useState([]);
+const CustomersList = ({customers}) => {
   const [closed, setClosed] = useState(true);
-
-  useEffect(() => {
-    get_customers().then(response => { setCustomers(response.data); })
-  }, []);
 
   const toggle = () => {
     setClosed(!closed);

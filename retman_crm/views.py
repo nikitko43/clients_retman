@@ -10,20 +10,6 @@ from retman_crm.forms import LoginForm, CustomerCreateForm, VisitationCreateForm
     FreezeForm, NotesForm
 
 
-class RetmanLoginView(LoginView):
-    template_name = 'login.html'
-    form_class = LoginForm
-    redirect_authenticated_user = True
-
-    def get_context_data(self, **kwargs):
-        data = super().get_context_data(**kwargs)
-        data['form_action'] = reverse('retman_crm:login')
-        return data
-
-    def get_success_url(self):
-        return reverse('retman_crm:dashboard')
-
-
 class DashboardView(LoginRequiredMixin, View):
     login_url = '/login/'
     redirect_field_name = 'dashboard'
@@ -52,17 +38,6 @@ class CustomerView(LoginRequiredMixin, View):
         data.update({'name': Customer.objects.get(pk=customer_id).full_name})
         return render(request, 'customer.html', data)
 
-
-class RedirectToCustomerView(View):
-    def post(self, request):
-        try:
-            customer = Customer.objects.get(card_id=request.POST['card_id'])
-            return redirect('/customer/' + str(customer.id))
-        except:
-            customer = Customer.objects.filter(full_name__istartswith=str(request.POST['card_id']))
-            if len(customer) == 1:
-                return redirect('/customer/' + str(customer[0].id))
-            return redirect('/dashboard/')
 
 
 class StatsView(LoginRequiredMixin, View):
