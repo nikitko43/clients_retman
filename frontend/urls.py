@@ -6,7 +6,7 @@ from . import views
 
 app_name = 'frontend'
 urlpatterns = [
-    path('activity', views.ActivityView.as_view()),
+    path('activity/', views.ActivityView.as_view()),
     path('customer/<int:pk>/', views.CustomerView.as_view(), name='customer'),
     path('login/', RetmanLoginView.as_view(), name='login'),
     path('', RetmanLoginView.as_view()),

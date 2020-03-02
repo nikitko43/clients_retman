@@ -39,9 +39,15 @@ const Customer = () => {
     const data = new FormData(event.target);
 
     create_membership(customer.id, data).then((response) => {
+      alert('Добавлено');
       get_customer_memberships(customer_id).then(response => {
         setMemberships(response.data);
       });
+
+      get_customer(customer_id).then(response => {
+        setCustomer(response.data);
+      });
+
     }).catch(() => alert('Ошибка'))
   };
 

@@ -30,7 +30,11 @@ const Membership = ({membership, active}) => {
 const CurrentMemberships = ({memberships}) => {
   const [opened, setOpened] = useState(false);
   const current_time = moment();
-  const active_memberships = memberships.filter(i => moment(i.expiration_date, 'DD/MM/YYYY HH:mm:ss') >= current_time);
+  const active_memberships = memberships.filter(i => {
+    return moment(i.expiration_date, 'DD/MM/YYYY HH:mm:ss') >= current_time &&
+      (i.membership_type.unlimited_group || i.membership_type.unlimited_personal || i.membership_type.unlimited_visitations ||
+       i.available_visitations > 0 || i.available_personal > 0 || i.available_group > 0);
+  });
   const rest = memberships.filter(i => moment(i.expiration_date, 'DD/MM/YYYY HH:mm:ss') < current_time);
 
   const toggleMemberships = () => {

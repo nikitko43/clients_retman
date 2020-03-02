@@ -68,7 +68,11 @@ $i: 1;
   .panel-block {
     padding: 0.3em 0.75em;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+  }
+
+  .panel-title {
+    padding: 0.4em 0.75em 0;
   }
 
   .panel-body-customers {

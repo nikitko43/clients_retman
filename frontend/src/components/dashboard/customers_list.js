@@ -23,7 +23,7 @@ const CustomersList = ({customers}) => {
         Все посетители
         <i className={closed ? "fas fa-angle-down" : "fas fa-angle-up"} aria-hidden="true" />
       </p>
-      <div className="panel-body-customers">
+      <div className="panel-body-customers visitation-column">
         {closed ? '' : customers.map(customer => <Customer customer={customer}/>)}
       </div>
     </article>

@@ -16,24 +16,39 @@ const CurrentVisitations = () => {
     getVisitations();
   }, []);
 
-  const renderVisitations = (type) => {
-    const items = visitations.filter(item => item.type === type);
+  const filterVisitations = (type) => {
+    return visitations.filter(item => item.type === type);
+  };
+
+  const renderVisitations = (items) => {
     return items.map(visitation => <VisitationLine visitation={visitation} key={visitation.id} active
                                                    onClose={() => getVisitations()}/>);
   };
 
+  const vs = filterVisitations('VS');
+  const pt = filterVisitations('PT');
+  const gt = filterVisitations('GT');
+
   return (
     <article className="panel">
-      <p className="panel-heading has-margin-bottom-7">
+      <p className="panel-heading">
         Текущие посещения
       </p>
-      <div className="columns">
+      <div className="columns is-marginless">
         <div className="column is-half border-right">
-          {renderVisitations('VS')}
+          {renderVisitations(vs)}
         </div>
         <div className="column is-half">
-          {renderVisitations('PT')}
-          {renderVisitations('GT')}
+          {gt.length !== 0 && <div>
+            <div className={"panel-title has-text-weight-semibold"}>Групповые:</div>
+              {renderVisitations(gt)}
+            </div>
+          }
+          {pt.length !== 0 && <div>
+            <div className={"panel-title has-text-weight-semibold"}>Персональные:</div>
+              {renderVisitations(pt)}
+            </div>
+          }
         </div>
       </div>
     </article>

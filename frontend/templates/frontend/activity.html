@@ -11,7 +11,7 @@
 <body>
 <section class="section">
   <div class="container">
-    <a href="/dashboard/react/">
+    <a href="/dashboard/">
       <div>
         <img border="0" src="{% static "frontend/heatmap/arrow.png" %}" width="25" height="25" class="b-p-img"
              style="padding-top: 30px; padding-left: 30px;">
@@ -28,7 +28,7 @@
 <script>
   var heatmap;
   axios
-  .get('v1/visitations/get_data_heatmap/')
+  .get('/api/v1/visitations/get_data_heatmap/')
   .then((response) => {
     heatmap = response.data;
     var chart1 = calendarHeatmap()
