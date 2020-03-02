@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 
 from retman_api.serializers import CustomerSerializer, MembershipSerializer, VisitationSerializer, \
     VisitationWithCustomerSerializer, VisitationHeatmapSerializer, PaymentSerializer, \
-    MembershipTypeSerializer, TrainerSerializer
+    MembershipTypeSerializer, TrainerSerializer, ShortCustomerSerializer
 from retman_api.models import Customer, Membership, Visitation, Payment, MembershipType, Trainer
 
 
@@ -21,6 +21,11 @@ class CustomersViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.annotate(count=Count('visit_customer',
         filter=Q(visit_customer__came_at__gte=last_month))).order_by('-count')
     serializer_class = CustomerSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ShortCustomerSerializer
+        return CustomerSerializer
 
 
 class TodayCustomersViewSet(viewsets.ModelViewSet):
@@ -156,7 +161,7 @@ class CloseCurrentVisitation(APIView):
 
         visitation.left_at = timezone.now()
         visitation.save()
-        return Response(VisitationSerializer(visitation).data, status.HTTP_200_OK)
+        return Response('Closed', status.HTTP_200_OK)
 
 
 class CloseGroupVisitations(APIView):
@@ -174,7 +179,7 @@ class VisitationsList(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return Visitation.objects.filter(customer=self.kwargs['customer_id']).order_by('-id')[:100]
 
-    serializer_class = VisitationSerializer
+    serializer_class = VisitationWithCustomerSerializer
 
 
 class CurrentVisitationsList(viewsets.ReadOnlyModelViewSet):

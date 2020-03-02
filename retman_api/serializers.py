@@ -22,6 +22,12 @@ class CustomerSerializer(ModelSerializer):
         fields = '__all__'
 
 
+class ShortCustomerSerializer(ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ['id', 'card_id', 'full_name']
+
+
 class MembershipTypeSerializer(ModelSerializer):
     class Meta:
         model = MembershipType
@@ -62,7 +68,8 @@ class VisitationSerializer(ModelSerializer):
 
 
 class VisitationWithCustomerSerializer(ModelSerializer):
-    customer = CustomerSerializer(many=False, required=False, read_only=True)
+    type_display = serializers.CharField(source='get_type_display', required=False)
+    customer = ShortCustomerSerializer(many=False, required=False, read_only=True)
 
     class Meta:
         model = Visitation
