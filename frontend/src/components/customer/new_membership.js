@@ -21,7 +21,9 @@ const MembershipTypeDropdown = () => {
 
 const NewMembership = ({handleSubmit}) => {
   const [date, setDate] = useState(moment().format('YYYY-MM-DD HH:mm'));
+  const [cost, setCost] = useState(2700);
   const onChangeDate = (event) => setDate(event.target.value);
+  const onCostChange = (event) => setCost(event.target.value);
 
   return (
     <form id="form_membership" className="control" onSubmit={handleSubmit}>
@@ -32,7 +34,7 @@ const NewMembership = ({handleSubmit}) => {
       </div>
       <div className="field">
         <label className="label">Стоимость</label>
-        <input type="number" name="cost" value="2000" className="input" min="0" id="ms_value" required="" />
+        <input type="number" name="cost" value={cost} onChange={onCostChange} className="input" min="0" id="ms_value" required="" />
       </div>
       <div className="field">
         <label className="label">Дата начала абонемента</label>
