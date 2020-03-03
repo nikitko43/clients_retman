@@ -1,5 +1,6 @@
 from datetime import timedelta, datetime, date
 
+import dateutil
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 
@@ -49,6 +50,28 @@ class MembershipsList(viewsets.ReadOnlyModelViewSet):
         return Membership.objects.filter(customer=self.kwargs['customer_id']).order_by('-id')[:100]
 
     serializer_class = MembershipSerializer
+
+
+class TrainersVisitationsView(APIView):
+    def post(self, request):
+        trainer_data = request.data.get('trainer')
+        start_date = parse(request.data.get('start_date'))
+        end_date = parse(request.data.get('end_date'))
+        end_date = end_date.replace(hour=23, minute=59)
+
+        print(start_date, end_date)
+
+        if trainer_data == 'all':
+            visitations = {}
+            for trainer in Trainer.objects.all():
+                v = Visitation.objects.filter(came_at__range=(start_date, end_date), trainer=trainer)
+                visitations[trainer.id] = VisitationWithCustomerSerializer(v, many=True).data
+        else:
+            trainer = Trainer.objects.get(id=trainer_data)
+            v = Visitation.objects.filter(came_at__range=(start_date, end_date), trainer=trainer)
+            visitations = {trainer.id: VisitationWithCustomerSerializer(v, many=True).data}
+
+        return Response(visitations)
 
 
 class CurrentMembershipCreate(APIView):

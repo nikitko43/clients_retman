@@ -37,18 +37,6 @@ class CustomerView(LoginRequiredMixin, View):
         return render(request, 'frontend/customer.html', data)
 
 
-class RedirectToCustomerView(View):
-    def post(self, request):
-        try:
-            customer = Customer.objects.get(card_id=request.POST['card_id'])
-            return redirect('/customer/' + str(customer.id))
-        except:
-            customer = Customer.objects.filter(full_name__istartswith=str(request.POST['card_id']))
-            if len(customer) == 1:
-                return redirect('/customer/' + str(customer[0].id))
-            return redirect('/dashboard/')
-
-
 class ActivityView(LoginRequiredMixin, View):
     login_url = '/login/'
 
@@ -66,3 +54,10 @@ class RedirectToCustomerView(View):
             if len(customer) == 1:
                 return redirect('/customer/' + str(customer[0].id))
             return redirect('/dashboard/')
+
+
+class TrainersView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request):
+        return render(request, 'frontend/trainers.html')

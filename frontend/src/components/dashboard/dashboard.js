@@ -42,6 +42,7 @@ const Dashboard = () => {
             </div>
             <div className="box">
               <a className="button is-info" href={"/activity/"}>Активность</a>
+              <a className="button is-info has-margin-left-7" href={"/trainers/"}>Тренеры</a>
             </div>
           </div>
           <div className="column">

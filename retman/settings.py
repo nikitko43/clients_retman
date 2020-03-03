@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'retman_api_cash',
     'frontend',
     'psycopg2',
+    # 'django_extensions',
 ]
 
 MIDDLEWARE = [

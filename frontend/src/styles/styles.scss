@@ -1,6 +1,7 @@
 @charset "utf-8";
 @import "~bulma/bulma";
 @import '~pretty-checkbox/src/pretty-checkbox.scss';
+@import '~react-calendar/dist/Calendar.css';
 
 $size-8: 0.5rem !default
 
@@ -55,6 +56,18 @@ $i: 1;
 			margin-#{$position}: -$sizee !important;
 		}
 	}
+}
+
+.react-calendar {
+  border: none;
+  border-right: 1px #e4e4e4 solid;
+  padding-right: 20px;
+  font-size: 16px;
+
+  abbr[title] {
+    text-decoration: none;
+    border-bottom: 1px #9d9d9d solid;
+  }
 }
 
 .panel {

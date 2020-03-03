@@ -82,9 +82,14 @@ export const get_membership_types = () => {
 };
 
 export const create_membership = (customer_id, data) => {
-    return customers.post(`${customer_id}/membership/`, data)
+    return customers.post(`${customer_id}/membership/`, data);
 };
 
 export const freeze_membership = (customer_id, data) => {
-    return customers.post(`${customer_id}/membership/freeze/`, data)
+    return customers.post(`${customer_id}/membership/freeze/`, data);
 };
+
+export const get_trainers_visitations = (data) => {
+    const headers = { 'X-CSRFTOKEN': getCookie('csrftoken') };
+    return axios.post('/api/v1/trainers_visitations/', data, {headers: headers});
+}

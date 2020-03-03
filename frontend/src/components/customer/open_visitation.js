@@ -1,17 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import DjangoCSRFToken from "django-react-csrftoken";
-import {get_trainers, open_visitation} from "../api";
+import {open_visitation} from "../api";
+import TrainersDropdown from "../common/trainers_dropdown";
 
-const TrainersDropdown = ({trainers}) => {
-  return (
-    <div className="select">
-      <select name="trainers">
-        {trainers.map(trainer => <option value={trainer.id}>{trainer.full_name}</option> )}
-      </select>
-    </div>
-  );
-
-};
 
 const OpenVisitation = ({customer, trainers}) => {
   const [radioChecked, setRadioChecked] = useState({VS: true, GT: false, PT: false});
