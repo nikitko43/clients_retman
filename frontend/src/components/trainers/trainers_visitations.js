@@ -14,7 +14,8 @@ const TrainersVisitations = ({trainers, visitations}) => {
             {visitations[trainer].map((i, key) => {
               return (
                 <div className={"has-margin-left-7"} key={key}>
-                  <b>{i.type_display[0]}</b> {i.customer.id} {i.customer.full_name} ({moment(i.came_at).format('dddd, D MMMM в H:mm')})
+                  <b>{i.type_display[0]}</b> {i.customer.id} {i.customer.full_name + ' '}
+                  ({moment(i.came_at, 'DD/MM/YYYY HH:mm:ss').format('dddd, D MMMM в H:mm')})
                   </div>
               );
             })}
