@@ -2,3 +2,4 @@ frontend/node_modules
 *idea*
 __pycache__/
 retman/static
+frontend/static
