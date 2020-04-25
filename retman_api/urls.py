@@ -3,8 +3,9 @@ from django.urls import path
 
 from retman_api.views import CustomersViewSet, CurrentMembershipCreate, MembershipsList, CurrentVisitation, \
     VisitationsList, CurrentVisitationsList, CloseCurrentVisitation, VisitationHeatmapView, \
-    PaymentsList, PaymentsOverview, CloseGroupVisitations, OpenVisitation, FreezeMembership, SavePhoto, \
-    CheckIntroducing, CustomerName, TodayCustomersViewSet, MembershipTypesList, TrainersList, TrainersVisitationsView
+    PaymentsViewSet, CloseGroupVisitations, OpenVisitation, FreezeMembership, SavePhoto, \
+    CheckIntroducing, CustomerName, TodayCustomersViewSet, MembershipTypesList, TrainersList, TrainersVisitationsView, \
+    ServicesViewSet, StatsView
 
 app_name = 'retman_api'
 
@@ -25,10 +26,11 @@ urlpatterns = [
     path('visitations/open/', OpenVisitation.as_view(), name='open_visitation'),
     path('visitations/close_group/', CloseGroupVisitations.as_view(), name='close_group_visitations'),
     path('visitations/get_data_heatmap/', VisitationHeatmapView.as_view(), name='heatmap'),
-    path('trainers_visitations/', TrainersVisitationsView.as_view()),
-    path('payments/', PaymentsList.as_view({'get': "list"}), name="payments"),
+    path('services/', ServicesViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('trainers_visitations/', TrainersVisitationsView.as_view(), name="trainers_visitations"),
+    path('payments/', PaymentsViewSet.as_view({'get': "list", 'post': "create"}), name="payments"),
     path('trainers/', TrainersList.as_view({'get': "list"}), name="trainers"),
     path('membership_types/', MembershipTypesList.as_view({'get': 'list'}), name="membership_types"),
-    path('payments/overview/', PaymentsOverview.as_view(), name="payments_overview"),
+    path('stats/', StatsView.as_view(), name='stats'),
     path('admin/', admin.site.urls),
 ]

@@ -92,4 +92,26 @@ export const freeze_membership = (customer_id, data) => {
 export const get_trainers_visitations = (data) => {
     const headers = { 'X-CSRFTOKEN': getCookie('csrftoken') };
     return axios.post('/api/v1/trainers_visitations/', data, {headers: headers});
-}
+};
+
+export const get_services = () => {
+    return axios.get('/api/v1/services/')
+};
+
+export const create_service = (title) => {
+    const headers = { 'X-CSRFTOKEN': getCookie('csrftoken') };
+    return axios.post('/api/v1/services/', {title: title}, {headers: headers});
+};
+
+export const create_payment = (data) => {
+    const headers = { 'X-CSRFTOKEN': getCookie('csrftoken') };
+    return axios.post('/api/v1/payments/', data, {headers: headers});
+};
+
+export const get_payments = () => {
+    return axios.get('/api/v1/payments/')
+};
+
+export const get_stats = (start_date, end_date) => {
+    return axios.get(`/api/v1/stats/?start_date=${start_date}&end_date=${end_date}`)
+};

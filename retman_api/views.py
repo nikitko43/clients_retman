@@ -13,8 +13,8 @@ from rest_framework.views import APIView
 
 from retman_api.serializers import CustomerSerializer, MembershipSerializer, VisitationSerializer, \
     VisitationWithCustomerSerializer, VisitationHeatmapSerializer, PaymentSerializer, \
-    MembershipTypeSerializer, TrainerSerializer, ShortCustomerSerializer
-from retman_api.models import Customer, Membership, Visitation, Payment, MembershipType, Trainer
+    MembershipTypeSerializer, TrainerSerializer, ShortCustomerSerializer, ServiceSerializer, PaymentCreateSerializer
+from retman_api.models import Customer, Membership, Visitation, Payment, MembershipType, Trainer, Service
 
 
 class CustomersViewSet(viewsets.ModelViewSet):
@@ -99,8 +99,7 @@ class CurrentMembershipCreate(APIView):
         if membership.is_valid():
             membership_obj = membership.save()
 
-            payment = Payment(type='MS', value=int(request.data.get('cost', 0)), customer=customer,
-                              membership=membership_obj)
+            payment = Payment(value=int(request.data.get('cost', 0)), customer=customer, membership=membership_obj)
             payment.save()
 
             return Response(membership.data, status=status.HTTP_201_CREATED)
@@ -219,52 +218,14 @@ class VisitationHeatmapView(APIView):
         return Response(VisitationHeatmapSerializer(count_query, many=True).data, status.HTTP_200_OK)
 
 
-class PaymentsList(viewsets.ReadOnlyModelViewSet):
+class PaymentsViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Payment.objects.filter(value__gt=0).order_by('-id')[:10]
 
-    serializer_class = PaymentSerializer
-
-
-class PaymentsOverview(APIView):
-    def get(self, request):
-        data = {}
-
-        last_week = Payment.objects.filter(
-            date__gt=timezone.now() - timedelta(days=7)).aggregate(Sum('value'))
-        data.update({'last_week': last_week['value__sum']})
-
-        last_month = Payment.objects.filter(
-            date__gt=timezone.now() - timedelta(days=30)).aggregate(Sum('value'))
-        data.update({'last_month': last_month['value__sum']})
-
-        last_year = Payment.objects.filter(
-            date__gt=timezone.now() - timedelta(days=365)).aggregate(Sum('value'))
-        data.update({'last_year': last_year['value__sum']})
-
-        last_month_ms = Payment.objects.filter(date__gt=timezone.now() - timedelta(days=30), type='MS').aggregate(
-            Sum('value'))
-        data.update({'last_month_ms': last_month_ms['value__sum'] or 0})
-
-        last_month_pt = Payment.objects.filter(date__gt=timezone.now() - timedelta(days=30), type='PT').aggregate(
-            Sum('value'))
-        data.update({'last_month_pt': last_month_pt['value__sum'] or 0})
-
-        last_month_gt = Payment.objects.filter(date__gt=timezone.now() - timedelta(days=30), type='GT').aggregate(
-            Sum('value'))
-        data.update({'last_month_gt': last_month_gt['value__sum'] or 0})
-
-        for months in [1, 3, 6, 12]:
-            months_active_memberships = Membership.objects.filter(expiration_date__gt=timezone.now(), months=months).aggregate(
-                count=Count('id'))
-            data.update({'month_active_memberships' + str(months): months_active_memberships['count'] or 0})
-
-        month_memberships_sum = Membership.objects.filter(expiration_date__gt=timezone.now(), months=months).aggregate(
-            sum=Sum('cost'))
-        data.update(
-            {'month_memberships_sum': month_memberships_sum['sum'] or 0})
-
-        return Response(data, status=status.HTTP_200_OK)
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return PaymentCreateSerializer
+        return PaymentSerializer
 
 
 class FreezeMembership(APIView):
@@ -341,3 +302,62 @@ class CustomerName(APIView):
             return Response('No such customer', status=status.HTTP_400_BAD_REQUEST)
 
         return Response(customer.full_name, status=status.HTTP_200_OK)
+
+
+class ServicesViewSet(viewsets.ModelViewSet):
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+
+class StatsView(APIView):
+
+    items = ['total_revenue', 'active_memberships', 'memberships_by_type', 'services', 'visitations',
+             'unique_visitations']
+
+    def get(self, request):
+        try:
+            start_date = parse(request.GET.get('start_date'))
+            end_date = parse(request.GET.get('end_date'))
+        except ValueError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        data = {func: getattr(self, func)(start_date, end_date) for func in self.items}
+        return Response(data)
+
+    @staticmethod
+    def total_revenue(start_date, end_date):
+        return Payment.objects.filter(date__range=(start_date, end_date)).aggregate(sum=Sum('value'))['sum']
+
+    @staticmethod
+    def active_memberships(start_date, end_date):
+        return Membership.objects.filter(expiration_date__gt=start_date).count()
+
+    @staticmethod
+    def memberships_by_type(start_date, end_date):
+        data = []
+        for type in MembershipType.objects.all():
+            qs = type.memberships.filter(enrollment_date__range=(start_date, end_date))
+            cost_sum = qs.aggregate(sum=Sum('cost'))['sum']
+            count = qs.count()
+            data.append((type.name, count, cost_sum))
+
+        return data
+
+    @staticmethod
+    def services(start_date, end_date):
+        data = []
+        for service in Service.objects.all():
+            qs = service.purchases.filter(date__range=(start_date, end_date))
+            value_sum = qs.aggregate(sum=Sum('value'))['sum']
+            count = qs.count()
+            data.append((service.title, count, value_sum))
+
+        return data
+
+    @staticmethod
+    def visitations(start_date, end_date):
+        return Visitation.objects.filter(came_at__range=(start_date, end_date)).count()
+
+    @staticmethod
+    def unique_visitations(start_date, end_date):
+        return Visitation.objects.filter(came_at__range=(start_date, end_date)).values('customer_id').distinct().count()

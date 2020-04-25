@@ -12,6 +12,7 @@ const Customer = ({customer}) => {
 
 const CustomersList = ({customers}) => {
   const [closed, setClosed] = useState(true);
+  const [search, setSearch] = useState('');
 
   const toggle = () => {
     setClosed(!closed);
@@ -24,7 +25,18 @@ const CustomersList = ({customers}) => {
         <i className={closed ? "fas fa-angle-down" : "fas fa-angle-up"} aria-hidden="true" />
       </p>
       <div className="panel-body-customers visitation-column">
-        {closed ? '' : customers.map(customer => <Customer customer={customer}/>)}
+        {closed ? '' :
+          <>
+            <input className={'input customer-search-input'} value={search} onChange={(e) => setSearch(e.target.value)}
+                   placeholder={'Поиск'}/>
+            {customers.map(customer => {
+              if (customer.card_id.toString().includes(search) || customer.full_name.toLowerCase().includes(search.toLowerCase())) {
+                return <Customer customer={customer}/>
+              }
+              return '';
+            })}
+          </>
+        }
       </div>
     </article>
   );

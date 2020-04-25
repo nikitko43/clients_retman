@@ -7,10 +7,10 @@ const CustomerRedirectInput = () => {
       <DjangoCSRFToken />
       <div className="field has-addons">
         <div className="control is-expanded">
-          <input name="card_id" className="input is-large" id="card_id" autoFocus autoComplete="off" />
+          <input name="card_id" className="input is-medium" id="card_id" autoFocus autoComplete="off" />
         </div>
         <div className="control">
-          <button className="button is-info is-large">Найти по ID</button>
+          <button className="button is-info is-medium">Найти по ID</button>
         </div>
       </div>
     </form>

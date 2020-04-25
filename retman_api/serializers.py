@@ -5,7 +5,7 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, Serializer
 
-from retman_api.models import Customer, Membership, Visitation, Payment, MembershipType, Trainer
+from retman_api.models import Customer, Membership, Visitation, Payment, MembershipType, Trainer, Service
 
 
 class CustomerSerializer(ModelSerializer):
@@ -82,12 +82,26 @@ class PaymentCustomerSerializer(ModelSerializer):
         fields = ['id', 'full_name', 'card_id']
 
 
+class ServiceSerializer(ModelSerializer):
+    class Meta:
+        model = Service
+        fields = ('id', 'title', )
+
+
 class PaymentSerializer(ModelSerializer):
     customer = PaymentCustomerSerializer()
+    service = ServiceSerializer()
+    membership = MembershipSerializer()
 
     class Meta:
         model = Payment
         fields = '__all__'
+
+
+class PaymentCreateSerializer(ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ('type', 'service', 'customer', 'value')
 
 
 class VisitationHeatmapSerializer(Serializer):

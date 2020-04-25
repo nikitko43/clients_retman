@@ -1,16 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import {render} from "react-dom";
 import Calendar from "react-calendar/dist/entry.nostyle";
+import { addDays } from 'date-fns';
 import moment from "moment";
 import TrainersDropdown from "../common/trainers_dropdown";
 import {get_trainers, get_trainers_visitations, open_visitation} from "../api";
 import TrainersVisitations from "./trainers_visitations";
 import BackArrow from "../common/back_arrow";
+import { DateRange } from 'react-date-range';
+import { ru } from 'date-fns/locale'
 
 const Trainers = () => {
-  const [date, setDate] = useState();
   const [trainers, setTrainers] = useState([]);
   const [visitations, setVisitations] = useState({});
+  const [date, setDate] = useState({
+    selection: {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: 'selection'
+    },
+  });
 
   useEffect(() => {
     get_trainers().then(response => {
@@ -38,24 +47,27 @@ const Trainers = () => {
       </div>
       <div className={"container box"}>
         <div className="is-flex">
-          <Calendar selectRange onChange={onChange} value={date} />
+
+        <DateRange
+          onChange={item => setDate({ ...date, ...item })}
+          months={1}
+          minDate={addDays(new Date(), -300)}
+          maxDate={addDays(new Date(), 30)}
+          weekdayDisplayFormat={'EEEEEE'}
+          showMonthAndYearPickers={false}
+          direction="vertical"
+          scroll={{ enabled: true }}
+          ranges={[date.selection]}
+          showMonthArrow={false}
+          locale={ru}
+        />
+
           <form className="has-margin-left-3" onSubmit={getVisitations}>
-            <TrainersDropdown trainers={trainers} have_all_option />
-            <div className={"has-text-weight-semibold has-margin-top-5 has-margin-bottom-5"}>
-              {date && date.length ?
-                <>
-                  <input hidden value={moment(date[0]).format('YYYY-M-D')} name='start_date' />
-                  <input hidden value={moment(date[1]).format('YYYY-M-D')} name='end_date' />
-                  {(moment(date[0]).isSame(moment(date[1]), 'day') ?
-                    moment(date[0]).format('D MMMM')
-                    :
-                    moment(date[0]).format('D MMMM') + ' - ' + moment(date[1]).format('D MMMM')
-                  )}
-                </>
-                :
-                '<- Выберите дату'
-              }
+            <div className={"has-margin-bottom-5"}>
+              <TrainersDropdown trainers={trainers} have_all_option />
             </div>
+            <input hidden value={moment(date.selection.startDate).format('YYYY-M-D')} name='start_date' />
+            <input hidden value={moment(date.selection.endDate).format('YYYY-M-D')} name='end_date' />
             <button className="button is-info">Показать</button>
           </form>
         </div>

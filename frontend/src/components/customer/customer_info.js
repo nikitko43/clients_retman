@@ -21,7 +21,7 @@ const CustomerInfo = ({customer}) => {
         {customer.phone_number && <p><b>Номер телефона</b> - { customer.phone_number }</p>}
         {customer.birth_date && <p><b>День рождения</b> - { customer.birth_date }</p>}
         <br />
-        <table className="table">
+        <table className="table customer-visitations-info">
           <thead>
             <tr>
               <th>Обычные</th>
@@ -31,10 +31,10 @@ const CustomerInfo = ({customer}) => {
             </tr>
           </thead>
           <tbody>
-            <td style={{fontSize: "22px"}}>{ customer.available.visitations }</td>
-            <td style={{fontSize: "22px"}}>{ customer.available.personal }</td>
-            <td style={{fontSize: "22px"}}>{ customer.available.group }</td>
-            <td style={{fontSize: "22px"}}>
+            <td>{ customer.available.visitations }</td>
+            <td>{ customer.available.personal }</td>
+            <td>{ customer.available.group }</td>
+            <td>
               <div className="pretty p-default p-primary introducing-checkbox">
                 <input type="checkbox"
                        checked={introducing} onChange={handleIntroducing}/>

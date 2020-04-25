@@ -1,11 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 
 from retman_api.models import Customer
-from retman_crm.forms import LoginForm
+from retman_api.forms import LoginForm
 
 
 class RetmanLoginView(LoginView):
@@ -20,6 +20,10 @@ class RetmanLoginView(LoginView):
 
     def get_success_url(self):
         return reverse('frontend:dashboard')
+
+
+class RetmanLogoutView(LogoutView):
+    next_page = '/login/'
 
 
 class DashboardView(LoginRequiredMixin, View):
@@ -61,3 +65,13 @@ class TrainersView(LoginRequiredMixin, View):
 
     def get(self, request):
         return render(request, 'frontend/trainers.html')
+
+
+class StatsView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request):
+        context = {}
+        if request.user.has_perm('retman_api.can_see_stats'):
+            context['can_see_stats'] = True
+        return render(request, 'frontend/stats.html', context)

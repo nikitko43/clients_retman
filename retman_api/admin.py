@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from retman_api.models import MembershipType, Membership, Customer, Trainer, Visitation
+from retman_api.models import MembershipType, Membership, Customer, Trainer, Visitation, Payment, Service
 
 
 class MembershipAdmin(admin.ModelAdmin):
@@ -13,3 +13,5 @@ admin.site.register(Membership, MembershipAdmin)
 admin.site.register(Customer)
 admin.site.register(Trainer)
 admin.site.register(Visitation)
+admin.site.register(Payment)
+admin.site.register(Service)

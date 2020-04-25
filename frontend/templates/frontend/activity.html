@@ -6,18 +6,21 @@
   <meta charset="UTF-8">
   <title>Активность</title>
   <link rel="stylesheet" type="text/css" href="{% static "frontend/heatmap/calendar-heatmap.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "frontend/heatmap/bulma.css" %}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
 <section class="section">
-  <div class="container">
+  <div>
     <a href="/dashboard/">
       <div>
         <img border="0" src="{% static "frontend/heatmap/arrow.png" %}" width="25" height="25" class="b-p-img"
              style="padding-top: 30px; padding-left: 30px;">
       </div>
     </a>
-    <div id="chart-one">
+    <div class="box">
+      <div id="chart-one">
+    </div>
     </div>
   </div>
 </section>
@@ -41,7 +44,7 @@
                   })
                   .legendEnabled(false)
                   .locale({
-                    months: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сен', 'Окт', 'Нояб', 'Дек'],
+                    months: ['Янв', 'Фев', 'Март', 'Апр', 'Май', 'Июнь', 'Июль', 'Авг', 'Сен', 'Окт', 'Нояб', 'Дек'],
                     days: ['', '', '', '', '', '', ''],
                     No: 'Нет',
                     on: ' ',

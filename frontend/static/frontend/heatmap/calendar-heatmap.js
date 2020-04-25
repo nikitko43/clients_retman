@@ -211,6 +211,7 @@ function calendarHeatmap() {
       }
 
       dayRects.exit().remove();
+      monthRange = monthRange.slice(1);
       var monthLabels = svg.selectAll('.month')
           .data(monthRange)
           .enter().append('text')

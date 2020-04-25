@@ -14,9 +14,6 @@ type_choices = (('VS', 'Обычное'), ('PT', 'Персональная тр�
 
 type_plural_choices = (('VS', 'Обычные'), ('PT', 'Персональные тренировки'), ('GT', 'Групповые тренировки'))
 
-payment_type_choices = (('MS', 'Абонемент'), ('VS', 'Обычное'), ('PT', 'Персональная тренировка'),
-                        ('GT', 'Групповая тренировка'))
-
 
 class Customer(models.Model):
     card_id = models.IntegerField(unique=True)
@@ -60,7 +57,8 @@ class Membership(models.Model):
     expiration_date = models.DateTimeField(null=True)
     cost = models.IntegerField(default=2000)
 
-    type = models.ForeignKey(MembershipType, null=True, blank=True, on_delete=models.CASCADE)
+    type = models.ForeignKey(MembershipType, null=True, blank=True, on_delete=models.CASCADE,
+                             related_name='memberships')
 
     available_visitations = models.IntegerField(default=0)
     available_personal = models.IntegerField(default=0)
@@ -104,9 +102,34 @@ class Visitation(models.Model):
         return f'{self.customer.full_name}, {self.came_at}'
 
 
+class Service(models.Model):
+    title = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.title
+
+
 class Payment(models.Model):
-    type = models.CharField(max_length=30, choices=payment_type_choices)
     value = models.IntegerField()
     date = models.DateTimeField(default=timezone.now)
-    customer = models.ForeignKey(Customer, null=True, blank=True, on_delete=models.CASCADE)
-    membership = models.ForeignKey(Membership, null=True, blank=True, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, null=True, blank=True, on_delete=models.SET_NULL)
+    membership = models.ForeignKey(Membership, null=True, blank=True, on_delete=models.SET_NULL)
+    service = models.ForeignKey(Service, blank=True, null=True, on_delete=models.SET_NULL, related_name='purchases')
+    type = models.CharField(max_length=100, choices=(('cash', 'Наличный'), ('card', 'Безналичный'), ('', '')),
+                            blank=True, null=True)
+
+    def __str__(self):
+        result = ''
+        if self.customer:
+            result += f'{self.customer.card_id} {self.customer.full_name}, '
+        if self.membership:
+            result += f'{self.membership.type.name if self.membership.type else "абонемент"}, '
+        if self.service:
+            result += f'{self.service.title}, '
+        return result + f'{self.date.strftime("%d %B %Y %-H:%M")}, {self.value}р'
+
+    class Meta:
+        permissions = [("can_see_stats", "Can see statistics page")]
+
+
+

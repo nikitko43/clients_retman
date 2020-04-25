@@ -3,15 +3,23 @@ import { render } from "react-dom";
 import CustomerRedirectInput from "./customer_redirect_input";
 import CurrentVisitations from "./current_visitations";
 import CustomersList from "./customers_list";
-import {get_customers, new_customer} from "../api";
+import {get_customers, get_payments, new_customer} from "../api";
 import SimpleForm from "../common/simple_form";
+import Purchases from "./purchases";
+import LastPayments from "./last_payments";
+import Notifications from "./notifications";
 
 const Dashboard = () => {
   const [customers, setCustomers] = useState([]);
+  const [payments, setPayments] = useState([]);
 
-  useEffect(() => { loadCustomers() }, []);
+  useEffect(() => {
+    loadCustomers();
+    loadPayments();
+  }, []);
 
   const loadCustomers = () => { get_customers().then(response => { setCustomers(response.data) }) };
+  const loadPayments = () => { get_payments().then(response => { setPayments(response.data) }) };
 
   const handleNewCustomerSubmit = (event) => {
     event.persist();
@@ -40,12 +48,19 @@ const Dashboard = () => {
             <div className="customers has-margin-bottom-3">
               <CustomersList customers={customers} />
             </div>
+            <div className="customers has-margin-bottom-3">
+              <LastPayments payments={payments} />
+            </div>
             <div className="box">
               <a className="button is-info" href={"/activity/"}>Активность</a>
               <a className="button is-info has-margin-left-7" href={"/trainers/"}>Тренеры</a>
+              <a className="button is-info has-margin-left-7" href={"/stats/"}>Статистика</a>
+              <a className="button is-info has-margin-left-7" href={"/logout/"}>Выйти</a>
             </div>
           </div>
           <div className="column">
+            <Purchases customers={customers} onNewPurchase={() => loadPayments()}/>
+            <Notifications />
             <div className="box">
               <SimpleForm fields={[
                 {label: 'ID карты', name: 'card_id'},

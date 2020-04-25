@@ -131,10 +131,3 @@ class TestAPI(APITestCase):
         r0 = self.client.get('/v1/visitations/get_data_heatmap/')
         self.assertEqualStatus(r0, 200)
 
-    # def test_payments_list(self):
-    #     data = {'card_id': 10, 'full_name': 'Реутов Никита', 'amount_of_available_visitations': 10}
-    #     self.client.post(self.uri, data)
-    #     self.client.post(self.uri + '1/visitations/add/', {'amount': 10, 'value': 1300})
-    #     selкf.client.post(self.uri + '1/visitations/add/', {'amount': 10, 'value': 1300})
-    #     r = self.client.get('/v1/payments/')
-    #     print(r.data[0])

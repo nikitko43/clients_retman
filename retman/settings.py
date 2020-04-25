@@ -39,8 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'retman_api',
-    'retman_crm',
-    'retman_api_cash',
     'frontend',
     'psycopg2',
     # 'django_extensions',
