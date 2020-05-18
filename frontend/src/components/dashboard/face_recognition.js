@@ -7,7 +7,7 @@ const FaceRecognition = ({customers}) => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    const socket = new WebSocket('ws://' + window.location.host + '/ws/notifications/');
+    const socket = new WebSocket(getWSAddress());
 
     socket.onmessage = function(e) {
       const data = JSON.parse(e.data);
@@ -106,6 +106,13 @@ const FaceRecognitionNotification = ({customers, data, labelSend, onClose}) => {
       </article>
     </>
   )
+};
+
+const getWSAddress = () => {
+  if (location.protocol === "https:") {
+    return 'wss://' + window.location.host + '/ws/notifications/'
+  }
+  return 'ws://' + window.location.host + '/ws/notifications/'
 };
 
 export default FaceRecognition;
