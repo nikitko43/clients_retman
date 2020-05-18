@@ -9,7 +9,7 @@ from retman_api.forms import LoginForm
 
 
 class RetmanLoginView(LoginView):
-    template_name = 'login.html'
+    template_name = 'frontend/login.html'
     form_class = LoginForm
     redirect_authenticated_user = True
 
@@ -65,6 +65,13 @@ class TrainersView(LoginRequiredMixin, View):
 
     def get(self, request):
         return render(request, 'frontend/trainers.html')
+
+
+class MembershipsView(LoginRequiredMixin, View):
+    login_url = '/login/'
+
+    def get(self, request):
+        return render(request, 'frontend/memberships.html')
 
 
 class StatsView(LoginRequiredMixin, View):

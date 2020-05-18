@@ -7,11 +7,13 @@ import {get_customers, get_payments, new_customer} from "../api";
 import SimpleForm from "../common/simple_form";
 import Purchases from "./purchases";
 import LastPayments from "./last_payments";
+import FaceRecognition from "./face_recognition";
 import Notifications from "./notifications";
 
 const Dashboard = () => {
   const [customers, setCustomers] = useState([]);
   const [payments, setPayments] = useState([]);
+  const [newCustomerOpened, setNewCustomerOpened] = useState(false);
 
   useEffect(() => {
     loadCustomers();
@@ -29,6 +31,7 @@ const Dashboard = () => {
     new_customer(data).then(response => {
       event.target.reset();
       loadCustomers();
+      setNewCustomerOpened(false);
     }).catch(error => {
       alert('Ошибка')
     });
@@ -52,24 +55,28 @@ const Dashboard = () => {
               <LastPayments payments={payments} />
             </div>
             <div className="box">
-              <a className="button is-info" href={"/activity/"}>Активность</a>
+              <a className="button is-info" href={"/memberships/"}>Абонементы</a>
               <a className="button is-info has-margin-left-7" href={"/trainers/"}>Тренеры</a>
+              <a className="button is-info has-margin-left-7" href={"/activity/"}>Активность</a>
               <a className="button is-info has-margin-left-7" href={"/stats/"}>Статистика</a>
               <a className="button is-info has-margin-left-7" href={"/logout/"}>Выйти</a>
             </div>
           </div>
           <div className="column">
             <Purchases customers={customers} onNewPurchase={() => loadPayments()}/>
+            <FaceRecognition customers={customers}/>
             <Notifications />
             <div className="box">
-              <SimpleForm fields={[
-                {label: 'ID карты', name: 'card_id'},
-                {label: 'ФИО', name: 'full_name'},
-                {label: 'Дата рождения', name: 'birth_date'},
-                {label: 'Серия и номер паспорта', name: 'passport'},
-                {label: 'Номер телефона', name: 'phone_number'}
-                ]} buttonText={'Добавить нового посетителя'} handleSubmit={handleNewCustomerSubmit}
-              />
+              {newCustomerOpened ?
+                <SimpleForm fields={[
+                  {label: 'ID карты', name: 'card_id'},
+                  {label: 'ФИО', name: 'full_name'},
+                  {label: 'Дата рождения', name: 'birth_date'},
+                  {label: 'Серия и номер паспорта', name: 'passport'},
+                  {label: 'Номер телефона', name: 'phone_number'}
+                ]} buttonText={'Сохранить нового посетителя'} handleSubmit={handleNewCustomerSubmit}
+                /> : <a onClick={() => setNewCustomerOpened(true)} className={"button is-info"}>Добавить нового посетителя</a>
+              }
             </div>
           </div>
         </div>

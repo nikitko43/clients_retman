@@ -13,8 +13,9 @@ from rest_framework.views import APIView
 
 from retman_api.serializers import CustomerSerializer, MembershipSerializer, VisitationSerializer, \
     VisitationWithCustomerSerializer, VisitationHeatmapSerializer, PaymentSerializer, \
-    MembershipTypeSerializer, TrainerSerializer, ShortCustomerSerializer, ServiceSerializer, PaymentCreateSerializer
-from retman_api.models import Customer, Membership, Visitation, Payment, MembershipType, Trainer, Service
+    MembershipTypeSerializer, TrainerSerializer, ShortCustomerSerializer, ServiceSerializer, PaymentCreateSerializer, \
+    NotificationSerializer
+from retman_api.models import Customer, Membership, Visitation, Payment, MembershipType, Trainer, Service, Notification
 
 
 class CustomersViewSet(viewsets.ModelViewSet):
@@ -24,7 +25,7 @@ class CustomersViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
 
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action in ('list', 'destroy'):
             return ShortCustomerSerializer
         return CustomerSerializer
 
@@ -35,19 +36,19 @@ class TodayCustomersViewSet(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
 
 
-class MembershipTypesList(viewsets.ReadOnlyModelViewSet):
+class MembershipTypesViewSet(viewsets.ModelViewSet):
     queryset = MembershipType.objects.all()
     serializer_class = MembershipTypeSerializer
 
 
-class TrainersList(viewsets.ReadOnlyModelViewSet):
+class TrainersViewSet(viewsets.ModelViewSet):
     queryset = Trainer.objects.all()
     serializer_class = TrainerSerializer
 
 
-class MembershipsList(viewsets.ReadOnlyModelViewSet):
+class MembershipsViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
-        return Membership.objects.filter(customer=self.kwargs['customer_id']).order_by('-id')[:100]
+        return Membership.objects.filter(customer=self.kwargs['customer_id'])
 
     serializer_class = MembershipSerializer
 
@@ -58,8 +59,6 @@ class TrainersVisitationsView(APIView):
         start_date = parse(request.data.get('start_date'))
         end_date = parse(request.data.get('end_date'))
         end_date = end_date.replace(hour=23, minute=59)
-
-        print(start_date, end_date)
 
         if trainer_data == 'all':
             visitations = {}
@@ -361,3 +360,29 @@ class StatsView(APIView):
     @staticmethod
     def unique_visitations(start_date, end_date):
         return Visitation.objects.filter(came_at__range=(start_date, end_date)).values('customer_id').distinct().count()
+
+
+class NotificationsView(APIView):
+    def get(self, request):
+        qs = Notification.objects.filter(created_at__startswith=date.today())
+        if not qs.exists():
+            created = False
+            bdays = Customer.objects.filter(birth_date__day=date.today().day, birth_date__month=date.today().month)
+
+            for customer in bdays:
+                created = True
+                Notification.objects.create(customer=customer, text=f'{customer.full_name} - сегодня день рождения.')
+
+            month_ago = date.today() - relativedelta(months=1)
+            visitations = Visitation.objects.filter(came_at__startswith=month_ago)
+            for visitation in visitations:
+                if not Visitation.objects.filter(customer=visitation.customer,
+                                                 came_at__gt=month_ago + relativedelta(days=1)).exists():
+                    created = True
+                    Notification.objects.create(customer=visitation.customer,
+                                                text=f'{visitation.customer.full_name} - последнее посещение месяц назад.')
+
+            if not created:
+                Notification.objects.create(text='Нет уведомлений')
+
+        return Response(NotificationSerializer(qs, many=True).data, status.HTTP_200_OK)

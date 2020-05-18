@@ -40,5 +40,5 @@ RUN ulimit -n 1000 \
        python-lxml \
   && npm install
 
-RUN pip install gunicorn==19.7.1
+RUN pip install gunicorn==20.0.4
 RUN mkdir /usr/src/app/static

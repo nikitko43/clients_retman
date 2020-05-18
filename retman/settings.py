@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'retman_api',
     'frontend',
     'psycopg2',
+    'channels',
     # 'django_extensions',
 ]
 
@@ -115,6 +116,7 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': "%d/%m/%Y %H:%M:%S",
     'DATE_FORMAT': "%d-%m-%Y",
     'DATE_INPUT_FORMATS': ["%d-%m-%Y", "%d %m %Y"],
+    'DATETIME_INPUT_FORMATS': ('iso-8601', "%d/%m/%Y %H:%M:%S"),
 }
 
 # Internationalization
@@ -145,3 +147,18 @@ STATIC_URL = '/static/'
 _PATH = os.path.abspath(os.path.dirname(__file__))
 
 LOGIN_REDIRECT_URL = '/dashboard/'
+
+ASGI_APPLICATION = "retman.routing.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],
+        },
+    },
+}
+
+RABBITMQ_URL = 'amqp://user:bitnami@rabbitmq'
+
+LABEL_TIMEOUT = 30

@@ -36,6 +36,11 @@ const CurrentVisitations = () => {
       </p>
       <div className="columns is-marginless">
         <div className="column is-half border-right">
+          {vs.length === 0 && gt.length === 0 && pt.length === 0 &&
+            <div>
+              Нет текущих посещений
+            </div>
+          }
           {renderVisitations(vs)}
         </div>
         <div className="column is-half">

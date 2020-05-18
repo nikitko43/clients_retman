@@ -30,7 +30,7 @@ class Customer(models.Model):
 
 
 class MembershipType(models.Model):
-    name = models.CharField(max_length=500)
+    name = models.CharField(max_length=500, default='Новый тип абонемента')
     visitations = models.IntegerField(default=0)
     personal = models.IntegerField(default=0)
     group = models.IntegerField(default=0)
@@ -83,14 +83,14 @@ class Membership(models.Model):
 
 
 class Trainer(models.Model):
-    full_name = models.CharField(max_length=500)
+    full_name = models.CharField(max_length=500, default='Новый тренер', blank=True)
 
     def __str__(self):
         return self.full_name
 
 
 class Visitation(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='visit_customer')
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, blank=True, null=True, related_name='visit_customer')
     came_at = models.DateTimeField(auto_now_add=True)
     left_at = models.DateTimeField(null=True, blank=True)
     key_number = models.IntegerField(null=True, blank=True)
@@ -132,4 +132,20 @@ class Payment(models.Model):
         permissions = [("can_see_stats", "Can see statistics page")]
 
 
+class RecognitionResult(models.Model):
+    card_id = models.CharField(max_length=5, blank=True, null=True)
+    datetime = models.DateTimeField(auto_now_add=True)
+    guid = models.CharField(max_length=100)
+    url = models.CharField(max_length=200)
 
+    def __str__(self):
+        return f'{self.card_id}, {self.datetime}'
+
+
+class Notification(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    text = models.CharField(max_length=3000)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return self.text

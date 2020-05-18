@@ -5,7 +5,7 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer, Serializer
 
-from retman_api.models import Customer, Membership, Visitation, Payment, MembershipType, Trainer, Service
+from retman_api.models import Customer, Membership, Visitation, Payment, MembershipType, Trainer, Service, Notification
 
 
 class CustomerSerializer(ModelSerializer):
@@ -109,3 +109,7 @@ class VisitationHeatmapSerializer(Serializer):
     count = serializers.IntegerField()
 
 
+class NotificationSerializer(ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = '__all__'
