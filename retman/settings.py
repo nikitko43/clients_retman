@@ -25,7 +25,7 @@ SECRET_KEY = '&((h)gf#9!gkh%5sg+!zkh&24ycige=e(!)(!__((*&b7+7$46'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['gym.nikitko.ru', 'clients.retman.ru', '127.0.0.1']
+ALLOWED_HOSTS = ['gym.nikitko.ru', 'clients.retman.ru', 'fit.nikitko.ru', '127.0.0.1']
 
 
 # Application definition
