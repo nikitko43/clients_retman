@@ -60,7 +60,7 @@ const Customer = () => {
       get_customer_memberships(customer_id).then(response => {
         setMemberships(response.data);
       });
-    }).catch(() => alert('Ошибка'))
+    }).catch(() => alert('Абонемент уже был заморожен или длина заморозки больше 28 дней'))
   };
 
   return (

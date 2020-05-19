@@ -9,6 +9,7 @@ import Purchases from "./purchases";
 import LastPayments from "./last_payments";
 import FaceRecognition from "./face_recognition";
 import Notifications from "./notifications";
+import {cardIDValidator, phoneValidator} from "../common/validators";
 
 const Dashboard = () => {
   const [customers, setCustomers] = useState([]);
@@ -24,8 +25,6 @@ const Dashboard = () => {
   const loadPayments = () => { get_payments().then(response => { setPayments(response.data) }) };
 
   const handleNewCustomerSubmit = (event) => {
-    event.persist();
-    event.preventDefault();
     const data = new FormData(event.target);
 
     new_customer(data).then(response => {
@@ -69,11 +68,13 @@ const Dashboard = () => {
             <div className="box">
               {newCustomerOpened ?
                 <SimpleForm fields={[
-                  {label: 'ID карты', name: 'card_id'},
-                  {label: 'ФИО', name: 'full_name'},
-                  {label: 'Дата рождения', name: 'birth_date'},
-                  {label: 'Серия и номер паспорта', name: 'passport'},
-                  {label: 'Номер телефона', name: 'phone_number'}
+                  {label: 'ID карты', name: 'card_id', value: '', type: 'number', placeholder: '123',
+                    changeValidator: cardIDValidator},
+                  {label: 'ФИО', name: 'full_name', value: '', placeholder: 'Петров Иван Васильевич'},
+                  {label: 'Дата рождения', name: 'birth_date', value: '', placeholder: '19-01-1979'},
+                  {label: 'Серия и номер паспорта', name: 'passport', value: '', placeholder: '1234 567890'},
+                  {label: 'Номер телефона', name: 'phone_number', value: '', placeholder: '8(800)487-2412',
+                    validator: phoneValidator}
                 ]} buttonText={'Сохранить нового посетителя'} handleSubmit={handleNewCustomerSubmit}
                 /> : <a onClick={() => setNewCustomerOpened(true)} className={"button is-info"}>Добавить нового посетителя</a>
               }

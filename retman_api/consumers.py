@@ -19,7 +19,7 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
         untrained_result = await get_untrained_result()
         if untrained_result:
             message = {'guid': untrained_result.guid, 'label': untrained_result.card_id,
-                       'image_url': untrained_result.url}
+                       'image_url': untrained_result.url, 'id': untrained_result.id}
 
             await self.channel_layer.group_send('notifications',
                                                 {'type': 'recognition_notification', 'message': message})

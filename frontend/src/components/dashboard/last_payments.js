@@ -4,8 +4,12 @@ import {get_customers} from "../api";
 const Payment = ({payment}) => {
   return (
     <p className="panel-block">
-      <b className={"has-margin-right-8"}>{payment.customer.card_id}</b>
-      <span className={"has-margin-right-8"}>{payment.customer.full_name + ','}</span>
+      {payment.customer &&
+        <>
+          <b className={"has-margin-right-8"}>{payment.customer.card_id}</b>
+          <span className={"has-margin-right-8"}>{payment.customer.full_name + ','}</span>
+        </>
+      }
       {payment.membership ?
         <span className={"has-margin-right-8"}>
           {payment.membership.membership_type ? payment.membership.membership_type.name + ',' : 'абонемент,'}

@@ -10,12 +10,16 @@ from retman_api.models import Customer, Membership, Visitation, Payment, Members
 
 class CustomerSerializer(ModelSerializer):
     available = serializers.SerializerMethodField(read_only=True)
+    engaged = serializers.SerializerMethodField(read_only=True)
 
     def get_available(self, customer):
         memberships = Membership.active(customer)
         return {'visitations': memberships.aggregate(sum=Sum('available_visitations'))['sum'] or 0,
                 'group': memberships.aggregate(sum=Sum('available_group'))['sum'] or 0,
                 'personal': memberships.aggregate(sum=Sum('available_personal'))['sum'] or 0}
+
+    def get_engaged(self, customer):
+        return Visitation.objects.filter(left_at__isnull=True, customer=customer).exists()
 
     class Meta:
         model = Customer

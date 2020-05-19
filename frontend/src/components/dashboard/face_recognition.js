@@ -11,7 +11,12 @@ const FaceRecognition = ({customers}) => {
 
     socket.onmessage = function(e) {
       const data = JSON.parse(e.data);
-      setNotifications(notifications => ([data, ...notifications]));
+      if (data.label === null) {
+        setNotifications(notifications => ([data, ...notifications.filter(i => i.label !== null)]))
+      }
+      else {
+        setNotifications(notifications => ([data, ...notifications]));
+      }
     };
 
     socket.onclose = function(e) {
@@ -34,7 +39,7 @@ const FaceRecognition = ({customers}) => {
   return (
     <>
       {notifications.map((item, i) => {
-        return <FaceRecognitionNotification customers={customers} data={item} labelSend={onLabelSend} key={item.guid}
+        return <FaceRecognitionNotification customers={customers} data={item} labelSend={onLabelSend} key={item.id}
                                             onClose={onNotificationClose} />
       })}
     </>

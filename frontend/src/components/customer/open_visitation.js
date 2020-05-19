@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import DjangoCSRFToken from "django-react-csrftoken";
-import {open_visitation} from "../api";
+import {close_customer_visitation, open_visitation} from "../api";
 import TrainersDropdown from "../common/trainers_dropdown";
 
 
 const OpenVisitation = ({customer, trainers}) => {
   const [radioChecked, setRadioChecked] = useState({VS: true, GT: false, PT: false});
+  const [visitationClosed, setVisitationClosed] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -27,6 +28,33 @@ const OpenVisitation = ({customer, trainers}) => {
   const onRadioChange = (event) => {
     setRadioChecked({...radioEmpty(), [event.target.value]: true})
   };
+
+  const handleClose = () => {
+    close_customer_visitation(customer.id).then((response) => setVisitationClosed(true));
+  };
+
+  if (Object.keys(customer).length === 0) {
+    return <></>
+  }
+
+  if (customer.engaged) {
+    return (
+      <div className={"box"}>
+        {visitationClosed ?
+          <div>
+            Посещение было закрыто.
+          </div>
+          :
+          <>
+            <div>
+              У посетителя открыто текущее посещение.
+            </div>
+            <a className={"button has-margin-top-6"} onClick={handleClose}>Закрыть</a>
+          </>
+        }
+      </div>
+    );
+  }
 
   return (
     <div id="create_visitation" className="box">
