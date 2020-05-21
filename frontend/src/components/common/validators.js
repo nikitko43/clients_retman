@@ -3,10 +3,10 @@ export const cardIDValidator = (v) => {
 };
 
 export const phoneValidator = (v) => {
-  const re = /^(\+[1-9][0-9]*(\([0-9]*\)|-[0-9]*-))?[0]?[1-9][0-9\- ]*$/;
+  const re = /^(\+?[1-9][0-9]*(\([0-9]*\)|-[0-9]*-?))?[0]?[1-9][0-9\- ]*$/;
 
   if(v.match(re)) {
     return null;
   }
-  return 'Неверный номер телефона'
+  return 'Неверный формат номера телефона'
 };
