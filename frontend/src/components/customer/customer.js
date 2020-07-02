@@ -91,9 +91,9 @@ const Customer = () => {
             <div className={"box"}>
               <NewMembership handleSubmit={handleSubmitNewMembership} />
             </div>
-            <div className={"box"}>
-              <EditDeleteCustomer customer={customer} afterEdit={() => get_customer(customer_id).then(response => {setCustomer(response.data);})}/>
-            </div>
+            {/*<div className={"box"}>*/}
+            {/*  <EditDeleteCustomer customer={customer} afterEdit={() => get_customer(customer_id).then(response => {setCustomer(response.data);})}/>*/}
+            {/*</div>*/}
           </div>
           <div className="column is-one-third">
             <FreezeMembership customer={customer} handleSubmit={handleSubmitFreezeMembership} />

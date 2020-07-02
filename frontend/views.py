@@ -64,6 +64,9 @@ class TrainersView(LoginRequiredMixin, View):
     login_url = '/login/'
 
     def get(self, request):
+        context = {}
+        if request.user.has_perm('retman_api.can_see_stats'):
+            context['can_see_stats'] = True
         return render(request, 'frontend/trainers.html')
 
 
@@ -71,6 +74,9 @@ class MembershipsView(LoginRequiredMixin, View):
     login_url = '/login/'
 
     def get(self, request):
+        context = {}
+        if request.user.has_perm('retman_api.can_see_stats'):
+            context['can_see_stats'] = True
         return render(request, 'frontend/memberships.html')
 
 
