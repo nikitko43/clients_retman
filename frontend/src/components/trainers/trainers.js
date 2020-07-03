@@ -122,12 +122,12 @@ const Trainers = () => {
           </div>
           <div className="column">
 
-            {trainer &&
-              <div className={'has-margin-bottom-5 has-padding-bottom-5 trainer-edit-form'}>
-                <SimpleUpdateDeleteForm fields={[{label: 'Имя тренера', name: 'full_name', value: getTrainerItem().full_name}]}
-                                        editFunc={onTrainerEdit} deleteFunc={onTrainerDelete} itemID={trainer} />
-              </div>
-            }
+            {/*{trainer &&*/}
+            {/*  <div className={'has-margin-bottom-5 has-padding-bottom-5 trainer-edit-form'}>*/}
+            {/*    <SimpleUpdateDeleteForm fields={[{label: 'Имя тренера', name: 'full_name', value: getTrainerItem().full_name}]}*/}
+            {/*                            editFunc={onTrainerEdit} deleteFunc={onTrainerDelete} itemID={trainer} />*/}
+            {/*  </div>*/}
+            {/*}*/}
 
             <DateRange
               onChange={item => setDate({ ...date, ...item })}
