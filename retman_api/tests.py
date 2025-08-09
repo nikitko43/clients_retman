@@ -74,13 +74,13 @@ class TestAPI(APITestCase):
         response_get = self.client.get(self.uri + '1/membership/')
         self.assertEqualStatus(response, 201)
         self.assertEqualStatus(response_get, 400)
-        self.assertEqual(response_get.data, "Customer don't have a membership",
+        self.assertEqual(response_get.data, "Customer doesn't have a membership",
                          "There's no membership, but returns one")
         response_create2 = self.client.post(self.uri + '1/membership/', {'enrollment_date': '2018-08-10T00:00'})
         response_get = self.client.get(self.uri + '1/membership/')
         self.assertEqualStatus(response_create2, 201)
         self.assertEqualStatus(response_get, 400)
-        self.assertEqual(response_get.data, "Customer don't have a membership",
+        self.assertEqual(response_get.data, "Customer doesn't have a membership",
                          'There is no membership, but returns one')
 
 
