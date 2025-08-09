@@ -166,7 +166,7 @@ class CurrentVisitation(APIView):
             visitation = Visitation.objects.get(
                 left_at__isnull=True, customer=customer_id)
         except ObjectDoesNotExist:
-            return Response("Customer don't engage at the moment", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Customer doesn't engage at the moment", status=status.HTTP_400_BAD_REQUEST)
 
         serializer = VisitationSerializer(visitation)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -233,7 +233,7 @@ class FreezeMembership(APIView):
                                                 expiration_date__gt=timezone.now(), enrollment_date__lt=timezone.now())
 
         if not memberships:
-            return Response("Customer don't have a membership", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Customer doesn't have a membership", status=status.HTTP_400_BAD_REQUEST)
         else:
             membership = memberships.first()
 
